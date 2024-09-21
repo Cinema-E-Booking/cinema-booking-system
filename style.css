@@ -1,0 +1,144 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F5F3F5; /* Updated background color */
+}
+
+.container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid #302B27; /* Added outline */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #00165a;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px;
+    background-color: #00165a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #003c99;
+}
+
+p {
+    text-align: center;
+    margin-top: 20px;
+}
+
+a {
+    color: #00165a;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F5F3F5;
+    color: #302B27;
+}
+
+header {
+    background-color: #302B27;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    color: #00165a;
+    margin-bottom: 20px;
+}
+
+.movie-list {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.movie {
+    background-color: white;
+    border: 2px solid #302B27;
+    border-radius: 10px;
+    padding: 10px;
+    width: 250px;
+    text-align: center;
+}
+
+.movie img {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #00165a;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn:hover {
+    background-color: #003c99;
+}
+
+footer {
+    background-color: #302B27;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarView</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Book Your Movie</h1>
+    </header>
+
+    <main>
+        <h2>Booking for <span id="movie-title"></span></h2>
+        <form action="confirmation.html" method="POST">
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Select Time:</label>
+            <select id="time" name="time" required>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="03:00 PM">03:00 PM</option>
+                <option value="06:00 PM">06:00 PM</option>
+                <option value="09:00 PM">09:00 PM</option>
+            </select>
+
+            <button type="submit">Confirm Booking</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cinema E-Booking</p>
+    </footer>
+
+    <script>
+        // Get the movie title from the query parameter and display it
+        const urlParams = new URLSearchParams(window.location.search);
+        const movie = urlParams.get('movie');
+        document.getElementById('movie-title').textContent = movie;
+    </script>
+</body>
+</html>
