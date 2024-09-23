@@ -5,40 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinema E-Booking</title>
     <link rel="stylesheet" href="style.css">
+    <script src="slider.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Cinema E-Booking</h1>
+
+    <header class="header-blue-part">
+        <div class="header-content">
+            <div class="booking-name">Cinema E-Booking</div>
+            <div class="search-bar-container">
+                <input type="text" id="search-bar" placeholder="Search for a movie...">
+                <select id="genre-dropdown">
+                    <option value="all">All Genres</option>
+                    <option value="Action">Action</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Animation">Animation</option>
+                    <option value="Mystery">Mystery</option>
+                </select>
+                <button id="search-btn" class="btn">Search</button>
+            </div>
+        </div>
     </header>
 
     <main>
         <h2>Now Showing</h2>
-        <div class="movie-list">
-            <div class="movie">
-                <img src="images:movie1.jpg" alt="Movie 1">
-                <h3>Movie 1</h3>
-                <p>A great movie about adventure.</p>
-                <a href="booking.html?movie=Movie1" class="btn">Book Now</a>
+        <div class="slider-container">
+            <span class="prev-btn arrow">&#10094;</span> <!-- Left arrow -->
+            <div class="movie-slider">
+                <div class="movie-slide">
+                    <div class="movie">
+                        <img src="images/movie1.jpg" alt="Movie 1" width="300" height="450" data-genre="Animation">
+                        <h3>Inside Out</h3>
+                        <p>A great movie about adventure.</p>
+                        <a href="booking.html?movie=Movie1" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie2.jpg" alt="Movie 2" width="300" height="450" data-genre="Romance">
+                        <h3>It Ends With Us</h3>
+                        <p>Lily Bloom moves to Boston to chase her lifelong dream of opening her own business. A chance meeting with charming neurosurgeon Ryle Kincaid soon sparks an intense connection, but as the two fall deeply in love, she begins to see sides of Ryle that remind her of her parents' relationship.</p>
+                        <a href="booking.html?movie=Movie2" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie3.jpeg" alt="Movie 3" width="300" height="450" data-genre="Mystery">
+                        <h3>Jaane Jaan</h3>
+                        <p>When a single mother is caught in a crime investigation, her neighbour, a gifted maths teacher, offers to help, and a relentless cop digs into the case.</p>
+                        <a href="booking.html?movie=Movie3" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie4.jpg" alt="Movie 4" width="300" height="450" data-genre="Action">
+                        <h3>Movie 4</h3>
+                        <p>Movie 4 description.</p>
+                        <a href="booking.html?movie=Movie4" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie5.webp" alt="Movie 5" width="300" height="450" data-genre="Animation">
+                        <h3>Movie 5</h3>
+                        <p>Movie 5 description.</p>
+                        <a href="booking.html?movie=Movie5" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie6.jpg" alt="Movie 6" width="300" height="450" data-genre="Action">
+                        <h3>Movie 6</h3>
+                        <p>Movie 6 description.</p>
+                        <a href="booking.html?movie=Movie6" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie7.jpg" alt="Movie 7" width="300" height="450" data-genre="Romance">
+                        <h3>Movie 7</h3>
+                        <p>Movie 7 description.</p>
+                        <a href="booking.html?movie=Movie7" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie8.jpg" alt="Movie 8" width="300" height="450" data-genre="Comedy">
+                        <h3>Movie 8</h3>
+                        <p>Movie 8 description.</p>
+                        <a href="booking.html?movie=Movie8" class="btn">Book Now</a>
+                    </div>
+                    <div class="movie">
+                        <img src="images/movie9.jpg" alt="Movie 9" width="300" height="450" data-genre="Comedy">
+                        <h3>Movie 9</h3>
+                        <p>Movie 9 description.</p>
+                        <a href="booking.html?movie=Movie9" class="btn">Book Now</a>
+                    </div>
+                </div>
             </div>
-
-            <div class="movie">
-                <img src="images/movie2.jpg" alt="Movie 2">
-                <h3>Movie 2</h3>
-                <p>A thrilling mystery awaits.</p>
-                <a href="booking.html?movie=Movie2" class="btn">Book Now</a>
-            </div>
-
-            <div class="movie">
-                <img src="images/movie3.jpg" alt="Movie 3">
-                <h3>Movie 3</h3>
-                <p>An epic fantasy tale.</p>
-                <a href="booking.html?movie=Movie3" class="btn">Book Now</a>
-            </div>
+            <span class="next-btn arrow">&#10095;</span> <!-- Right arrow -->
         </div>
     </main>
 
     <footer>
         <p>&copy; 2024 Cinema E-Booking</p>
     </footer>
+
 </body>
 </html>
