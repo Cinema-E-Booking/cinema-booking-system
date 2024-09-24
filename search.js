@@ -17,7 +17,6 @@ function createMovie(m) {
   const img = document.createElement("img");
   img.setAttribute("src", m.trailerPictureUrl);
   img.setAttribute("alt", `${m.title} Poster`);
-  img.setAttribute("width", "300");
   img.setAttribute("height", "300");
 
   const h3 = document.createElement("h3");
