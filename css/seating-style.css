@@ -1,0 +1,96 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000; /* Black background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff; /* White text */
+}
+
+.screen {
+    background-color: #444; /* Dark screen background */
+    color: white;
+    padding: 10px;
+    margin: 20px 0;
+    width: 80%;
+    text-align: center;
+    font-size: 24px;
+    border-radius: 25px 25px 0 0;
+}
+
+.seating-grid {
+    display: flex;
+    flex-direction: column; /* Stack rows vertically */
+    align-items: center; /* Center the rows */
+    gap: 15px; /* Spacing between rows */
+    margin: 0 auto;
+    max-width: 600px; /* Adjust width to fit the screen layout better */
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Space between seats in a row */
+}
+
+.seat {
+    width: 50px;
+    height: 50px;
+    background-color: white; /* Available seat color */
+    border: 2px solid #444;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.seat.available {
+    background-color: white;
+}
+
+.seat.occupied {
+    background-color: red; /* Occupied seat color */
+    cursor: not-allowed;
+}
+
+.seat.selected {
+    background-color: #6e94ff; /* Selected seat color */
+}
+
+.legend {
+    margin: 20px;
+    display: flex;
+    justify-content: space-around;
+    color: white;
+}
+
+.available-legend,
+.selected-legend,
+.occupied-legend {
+    display: inline-block;
+    margin: 5px 10px;
+    padding: 5px;
+    background-color: #444;
+    border-radius: 4px;
+}
+
+.available-legend {
+    background-color: white;
+    color: black;
+}
+
+.selected-legend {
+    background-color: #6e94ff;
+}
+
+.occupied-legend {
+    background-color: red;
+}
+
+/* Screen text style */
+.screen {
+    background-color: #333;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 50%;
+}
