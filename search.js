@@ -40,12 +40,23 @@ function createMovie(m) {
 }
 
 async function populateSearchResults(movies) {
-  const grid = document.querySelector(".movie-grid");
-  grid.textContent = "";
+  const nowShowingGrid = document.querySelector("#now-showing");
+  nowShowingGrid.textContent = "";
 
-  movieElements = movies.map(m => createMovie(m));
-  for (const element of movieElements) {
-    grid.appendChild(element);
+  const comingSoonGrid = document.querySelector("#coming-soon");
+  comingSoonGrid.textContent = "";
+
+  const nowShowing = movies.filter(m => m.currentlyRunning);
+  const comingSoon = movies.filter(m => !m.currentlyRunning);
+
+  nowShowingElements = nowShowing.map(m => createMovie(m));
+  for (const element of nowShowingElements) {
+    nowShowingGrid.appendChild(element);
+  }
+
+  comingSoonElements = comingSoon.map(m => createMovie(m));
+  for (const element of comingSoonElements) {
+    comingSoonGrid.appendChild(element);
   }
 }
 
