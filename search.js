@@ -15,7 +15,7 @@ function createMovie(m) {
   div.setAttribute("class", "movie");
 
   const img = document.createElement("img");
-  img.setAttribute("src", m.trailerImageUrl);
+  img.setAttribute("src", m.trailerPictureUrl);
   img.setAttribute("alt", `${m.title} Poster`);
   img.setAttribute("width", "300");
   img.setAttribute("height", "300");
