@@ -14,10 +14,16 @@ function createMovie(m) {
   const div = document.createElement("div");
   div.setAttribute("class", "movie");
 
-  const img = document.createElement("img");
+  // The rubric asks for the trailer to be embeded into the home screen, either this or the poster seems good to me though
+  const iframe = document.createElement("iframe");
+  iframe.setAttribute("src", m.trailerVideoUrl);
+  iframe.setAttribute("alt", `${m.title} Trailer`);
+  iframe.setAttribute("height", "300");
+
+  /*const img = document.createElement("img");
   img.setAttribute("src", m.trailerPictureUrl);
   img.setAttribute("alt", `${m.title} Poster`);
-  img.setAttribute("height", "300");
+  img.setAttribute("height", "300"); */
 
   const h3 = document.createElement("h3");
   h3.textContent = m.title;
