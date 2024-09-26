@@ -14,10 +14,18 @@ function createMovie(m) {
   const div = document.createElement("div");
   div.setAttribute("class", "movie");
 
+  // The rubric asks for a embedded movie trialer, so this can replace the poster unless we decide we like the poster better
+  const iframe = document.createElement("iframe");
+  iframe.setAttribute("src", m.trailerVideoUrl);
+  iframe.setAttribute("alt", `${m.title} Poster`);
+  iframe.setAttribute("height", "300");
+
+  /* 
   const img = document.createElement("img");
   img.setAttribute("src", m.trailerPictureUrl);
   img.setAttribute("alt", `${m.title} Poster`);
   img.setAttribute("height", "300");
+  */
 
   const h3 = document.createElement("h3");
   h3.textContent = m.title;
@@ -31,7 +39,8 @@ function createMovie(m) {
   a.setAttribute("class", "btn");
   a.textContent = "Book Now";
 
-  div.appendChild(img);
+  div.appendChild(iframe);
+  //div.appendChild(img);
   div.appendChild(h3);
   div.appendChild(p);
   div.appendChild(a);
