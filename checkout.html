@@ -12,7 +12,7 @@
     </header>
 
     <main>
-        <h2>Checkout for <span id="movie-title"></span> at [TIME] in [SEAT]</h2>
+        <h2>The Total is: [Total]</h2>
         <form action="confirmation.html" method="POST">
             <label for="purchaseMethod">Select Method of Purchase</label>
             <select id="purchaseMethod" name="purchaseMethod" required>
@@ -24,14 +24,23 @@
             <label for="addMethodofPurchase">Add Method of Purchase</label>
             <p id="addMethodofPurchase" name="addMethodofPurchase"></p>
                 <p>
-                    <label for="ccn">Credit Card Number:</label>
+                    <label for="ccn">Credit/Debit Card Number:</label>
                     <input type="text" id="ccn" name="creditCardNumber" required>
                     <label for="name">Name on Card:</label>
                     <input type="text" id="name" name="creditCardName" required>
+                    <label for="name">Billing Address:</label>
+                    <input type="text" id="name" name="creditCardName" required>
+                    
                 </p>
+                <div style="text-align:center">
+                    <button>Add Method of Payment</button>
+                </div>
             </p>
 
-            <button type="submit"><a href="confirmation.html"></a>Checkout</button>
+            <div style="text-align:center">
+                <button type="submit"><a href="confirmation.html"></a>Cancel Payment</button>
+                <button type="submit"><a href="confirmation.html"></a>Confirm Payment</button>
+            </div>
         </form>
     </main>
 
