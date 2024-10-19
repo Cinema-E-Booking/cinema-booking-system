@@ -77,7 +77,7 @@ export default function Home() {
             </div>
             <button id="confirm-seats">Confirm Selection</button>
         </main>
-        <Script src="@/public/seating.jsx"></Script>
+        <Script src="@/public/seating.js"></Script>
     </>
   );
 }
