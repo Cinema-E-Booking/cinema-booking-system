@@ -17,7 +17,7 @@ export default function Home() {
             <button type="submit">Login</button>
         </form>
         <p>
-            Don't have an account? <a href="registeration.html">Register here</a>
+            Don't have an account? <a href="/registration">Register here</a>
         </p>
       </div>
     </>
