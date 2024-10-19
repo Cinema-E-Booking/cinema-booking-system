@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -33,7 +34,31 @@ export default function Home() {
     } catch (error) {
       console.log("Error occured during Resgistration", error)
     }
+
+    sendEmail();
   };
+  
+  const sendEmail = () => {
+    const templateParams = {
+      user_email: email,
+      to_name: name
+    }
+
+    // the first parameter of .send is your emailJS serviceID, right now this page only sends emails from andrew.ingraham555@gmail.com
+    // in the future we could create an email for the Cinema E-Booking site so that emailJS sends emails from that email.
+    emailjs
+  .send('service_a3a4w2o', 'template_k636mzi', templateParams, {
+    publicKey: 'LjAx_0FZrUNw_jL0A',
+  })
+  .then(
+    (res) => {
+      console.log('SUCCESS!', res.status, res.text);
+    },
+    (err) => {
+      console.log('FAILED...', err);
+    },
+  );
+  }
 
   return (
     <>
