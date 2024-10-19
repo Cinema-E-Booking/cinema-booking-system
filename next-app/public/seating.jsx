@@ -1,4 +1,4 @@
-const seats = document.querySelectorAll('.seat.available');
+const seats = document.querySelectorAll('.seatavailable');
 const confirmButton = document.getElementById('confirm-seats');
 
 seats.forEach(seat => {
@@ -8,7 +8,7 @@ seats.forEach(seat => {
 });
 
 confirmButton.addEventListener('click', () => {
-    const selectedSeats = document.querySelectorAll('.seat.selected');
+    const selectedSeats = document.querySelectorAll('.seatselected');
     if (selectedSeats.length === 0) {
         alert("Please select at least one seat.");
     } else {

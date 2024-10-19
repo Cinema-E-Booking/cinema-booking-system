@@ -12,68 +12,68 @@ export default function Home() {
       <header>
             <h1>Choose Your Seats</h1>
       </header>
-        <main>
+        <main className={styles.div}>
             <div className={styles.screen}>SCREEN</div>
-            <div className={styles.seating.grid}>
+            <div className={styles.seatinggrid}>
             {/* Row 1 */}
             <div className={styles.row}>
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
             </div>
             {/* Row 2 */}
             <div className={styles.row}>
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatoccupied].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
             </div>
             {/* Row 3 (Accessible) */}
-            <div className={styles.row.accessible}>
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.occupied} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
+            <div className={styles.row}>
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
             </div>
             {/* Row 4 */}
             <div className={styles.row}>
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.occupied} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatoccupied].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
             </div>
             {/* Row 5 */}
             <div className={styles.row}>
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.occupied} />
-                <div className={styles.seat.available} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatoccupied].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
             </div>
             {/* Row 6 (Back) */}
             <div className={styles.row}>
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.available} />
-                <div className={styles.seat.occupied} />
-                <div className={styles.seat.available} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                <div className={[styles.seat, styles.seatavailable].join(" ")} />
             </div>
             </div>
             <div className={styles.legend}>
-            <span className={styles.available.legend}>Available</span>
-            <span className={styles.selected.legend}>Selected</span>
-            <span className={styles.occupied.legend}>Occupied</span>
+            <span className={styles.availablelegend}>Available</span>
+            <span className={styles.selectedlegend}>Selected</span>
+            <span className={styles.occupiedlegend}>Occupied</span>
             </div>
             <button id="confirm-seats">Confirm Selection</button>
         </main>

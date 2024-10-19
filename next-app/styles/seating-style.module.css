@@ -18,7 +18,7 @@
     border-radius: 25px 25px 0 0;
 }
 
-.seating.grid {
+.seatinggrid {
     display: flex;
     flex-direction: column; /* Stack rows vertically */
     align-items: center; /* Center the rows */
@@ -42,16 +42,16 @@
     cursor: pointer;
 }
 
-.seat.available {
+.seatavailable {
     background-color: white;
 }
 
-.seat.occupied {
+.seatoccupied {
     background-color: red; /* Occupied seat color */
     cursor: not-allowed;
 }
 
-.seat.selected {
+.seatselected {
     background-color: #6e94ff; /* Selected seat color */
 }
 
@@ -62,9 +62,9 @@
     color: white;
 }
 
-.available-legend,
-.selected-legend,
-.occupied-legend {
+.availablelegend,
+.selectedlegend,
+.occupiedlegend {
     display: inline-block;
     margin: 5px 10px;
     padding: 5px;
@@ -72,16 +72,16 @@
     border-radius: 4px;
 }
 
-.available-legend {
+.availablelegend {
     background-color: white;
     color: black;
 }
 
-.selected-legend {
+.selectedlegend {
     background-color: #6e94ff;
 }
 
-.occupied-legend {
+.occupiedlegend {
     background-color: red;
 }
 
