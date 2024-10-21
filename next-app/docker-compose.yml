@@ -1,0 +1,42 @@
+services:
+  cinema_database:
+    image: postgres:12.2-alpine
+    container_name: cinema_database
+    restart: always
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - backend-network
+    volumes:
+      - cinema_api_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["cmd-shell", "pg_isready -u $$postgres_user -d $$postgres_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  cinema_next_app:
+    build: .
+    platform: linux/amd64
+    container_name: cinema_next_app
+    environment:
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=postgres
+      - PGHOST=cinema_database
+      - PGPORT=5432
+    networks:
+      - backend-network
+    ports:
+      - 3000:3000
+    depends_on:
+      - cinema_database
+
+volumes:
+  cinema_api_postgres: {}
+
+networks:
+  backend-network: {}
