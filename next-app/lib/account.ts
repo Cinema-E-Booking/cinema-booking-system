@@ -50,7 +50,7 @@ export async function setCustomerStatus(accountId: number, status: CustomerStatu
   await query(queryText, values);
 }
 
-export async function compareCustomerLogin(email: string, providedPassword: string) {
+export async function compareCustomerLogin(email: string | undefined, providedPassword: string | undefined) {
   const queryText = `
   SELECT password_hash
   FROM account as a
@@ -67,7 +67,39 @@ export async function compareCustomerLogin(email: string, providedPassword: stri
   const providedPasswordHash = providedPassword;
 
   // TODO: Compare hashes
-  return storedPasswordHash === providedPasswordHash;
+  return res.rows[0].password_hash.toString('utf-8') === providedPassword;
+}
+
+export async function getCustomerAccountId(email: string | undefined, providedPassword: string | undefined) {
+  const queryText = `
+  SELECT a.id, a.password_hash
+  FROM account as a
+  JOIN customer as c
+  ON a.id = c.account_id
+  WHERE c.email = $1;
+  `;
+
+  const values = [email];
+  const res = await query(queryText, values);
+
+  if (res.rows.length === 0) {
+    return null; // No user found
+  }
+
+  const storedPasswordHash = res.rows[0].password_hash;
+
+  // Compare the provided password with the stored hash
+  const passwordMatches = providedPassword === storedPasswordHash.toString('utf-8');
+  console.log(passwordMatches);
+  console.log(providedPassword);
+  console.log(storedPasswordHash.toString('utf-8'));
+  console.log(res.rows[0].id);
+
+  if (passwordMatches) {
+    return res.rows[0].id; // Return the account ID
+  } else {
+    return null; // Password does not match
+  }
 }
 
 export type EditCustomerOpts = Partial<Omit<Customer, "accountId" | "email" | "state">>;

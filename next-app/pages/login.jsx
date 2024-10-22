@@ -1,6 +1,22 @@
 import Head from "next/head";
 
+<<<<<<< Updated upstream:next-app/pages/login.jsx
 export default function Home() {
+=======
+export default function login() {
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget)
+    signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirect: false,
+    });
+  };
+
+>>>>>>> Stashed changes:next-app/pages/login.tsx
   return (
     <>
       <Head>
