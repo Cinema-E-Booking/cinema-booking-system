@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent }  from "react";
+import { signIn } from "next-auth/react";
 
 export default function login() {
 
@@ -21,11 +22,11 @@ export default function login() {
       </Head>
       <div className="container">
         <h2>Login</h2>
-        <form action="profile.html" method="POST">
+        <form action="/" method="POST">
             <label htmlFor="email">Email:</label>
-            <input type="email" id="email" name="email" required="" />
+            <input type="email" id="email" name="email" required />
             <label htmlFor="password">Password:</label>
-            <input type="password" id="password" name="password" required="" />
+            <input type="password" id="password" name="password" required />
             <button type="submit">Login</button>
         </form>
         <p>
