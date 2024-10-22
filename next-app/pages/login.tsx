@@ -1,8 +1,6 @@
 import Head from "next/head";
+import { FormEvent }  from "react";
 
-<<<<<<< Updated upstream:next-app/pages/login.jsx
-export default function Home() {
-=======
 export default function login() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -15,8 +13,6 @@ export default function login() {
       redirect: false,
     });
   };
-
->>>>>>> Stashed changes:next-app/pages/login.tsx
   return (
     <>
       <Head>
