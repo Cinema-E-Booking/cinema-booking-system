@@ -26,7 +26,7 @@ export async function createCustomer(opts: CreateCustomerOpts): Promise<number> 
     RETURNING id
   )
   INSERT INTO customer (account_id, email, first_name, last_name, wants_promotions, state)
-  VALUES ((SELECT id FROM new_id), $1, $3, $4, $5, 'inactive')
+  VALUES ((SELECT id FROM new_id), $1, $3, $4, $5, 'active')
   RETURNING account_id;
   `;
 
