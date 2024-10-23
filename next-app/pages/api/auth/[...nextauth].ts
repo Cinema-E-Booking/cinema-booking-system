@@ -11,11 +11,8 @@ export const authOptions = {
           },
           async authorize(credentials, req) {
             
-            console.log({credentials});
-
             try {
               const id = await getCustomerAccountId(credentials?.email, credentials?.password);
-              console.log({id});
               if (id != null) {
                 return { id: id };
               }

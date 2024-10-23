@@ -90,10 +90,6 @@ export async function getCustomerAccountId(email: string | undefined, providedPa
 
   // Compare the provided password with the stored hash
   const passwordMatches = providedPassword === storedPasswordHash.toString('utf-8');
-  console.log(passwordMatches);
-  console.log(providedPassword);
-  console.log(storedPasswordHash.toString('utf-8'));
-  console.log(res.rows[0].id);
 
   if (passwordMatches) {
     return res.rows[0].id; // Return the account ID

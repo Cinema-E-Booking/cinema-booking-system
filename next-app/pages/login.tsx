@@ -8,12 +8,13 @@ export default function login() {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget)
-    signIn('credentials', {
+    const response = await signIn('credentials', {
       email: formData.get('email'),
       password: formData.get('password'),
-      redirect: false,
+      callbackUrl: 'http://localhost:3000/',
     });
   };
+  
   return (
     <>
       <Head>
@@ -22,7 +23,7 @@ export default function login() {
       </Head>
       <div className="container">
         <h2>Login</h2>
-        <form action="/" method="POST">
+        <form onSubmit={handleSubmit} method="POST">
             <label htmlFor="email">Email:</label>
             <input type="email" id="email" name="email" required />
             <label htmlFor="password">Password:</label>

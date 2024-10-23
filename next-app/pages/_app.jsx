@@ -1,6 +1,7 @@
 import "@/styles/style.css";
 import Head from "next/head";
-import { SessionProvider, useSession, signIn, signOut } from "next-auth/react"
+import { SessionProvider, useSession, signOut } from "next-auth/react"
+import { useRouter } from 'next/router'
 
 export default function App({ Component, pageProps: { session, ...pageProps} }) {
   return (
@@ -19,13 +20,18 @@ export default function App({ Component, pageProps: { session, ...pageProps} }) 
 
 const Navbar = () => {
   const { data: session } = useSession();
+  const router = useRouter();
+
+  if (router.pathname === '/login') {
+    return null;
+  }
 
   return (
     <nav>
       {session ? (
         <button onClick={() => signOut()}>Logout</button>
       ) : (
-        <button onClick={() => signIn()}>Login</button>
+        <a href="http://localhost:3000/login">Login</a>
       )}
     </nav>
   );
