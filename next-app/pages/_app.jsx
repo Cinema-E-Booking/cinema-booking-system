@@ -29,11 +29,6 @@ const Navbar = () => {
   return (
     <nav>
       {session ? (
-<<<<<<< Updated upstream
-        <button onClick={() => signOut()}>Logout</button>
-      ) : (
-        <a href="http://localhost:3000/login">Login</a>
-=======
         <div>
           <button onClick={() => signOut()}>Logout</button>
           <a href="http://localhost:3000/editProfile">editProfile</a>
@@ -42,7 +37,6 @@ const Navbar = () => {
         <div>
           <a href="http://localhost:3000/login">Login</a>
         </div>
->>>>>>> Stashed changes
       )}
     </nav>
   );

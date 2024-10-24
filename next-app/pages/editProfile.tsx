@@ -1,13 +1,10 @@
 import Head from "next/head";
-<<<<<<< Updated upstream
-import { useState } from 'react';
-import emailjs from "@emailjs/browser";
-=======
 import { useState, AwaitedReactNode, JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from 'react';
 
->>>>>>> Stashed changes
 
 const CreateCustomer = () => {
+    const [email, setEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -20,8 +17,6 @@ const CreateCustomer = () => {
     const [cardName, setCardName] = useState('');
     const [expiration, setExpiration] = useState('');
 
-<<<<<<< Updated upstream
-=======
     const [cardId, setCardId] = useState('');
     const [card1Id, setCard1Id] = useState('');
     const [card1LastFour, setcard1LastFour] = useState('');
@@ -103,52 +98,19 @@ const CreateCustomer = () => {
         }
     };
 
->>>>>>> Stashed changes
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
-        if(!firstName || !lastName || !password) {
-            setError("All fields required");
-            return;
-          }
 
-<<<<<<< Updated upstream
-        const customerData = {
-            password,
-            firstName,
-            lastName,
-            wantsPromotions,
-            address,
-            cardNumber,
-            cvc,
-            cardName,
-            expiration
-        };
-
-        try {
-            const response = await fetch('./api/profileTest', {
-=======
         try {
             fetch('./api/returnCustomer', {
->>>>>>> Stashed changes
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
-<<<<<<< Updated upstream
-                body: JSON.stringify(customerData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message);
-            }
-
-            setSuccess('sucess');
-=======
                 body: JSON.stringify({email, password}),
             })
             .then(isValidRes => isValidRes.json())
@@ -190,7 +152,6 @@ const CreateCustomer = () => {
         })
     })
             setSuccess('success');
->>>>>>> Stashed changes
         } catch (err) {
             setError(String(err));
         }
@@ -310,7 +271,14 @@ const CreateCustomer = () => {
         </Head>
         <div className ="container">
             <h2>Edit Profile</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={populate}>
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
                 <input
                     type="password"
                     placeholder="Password"
@@ -318,8 +286,6 @@ const CreateCustomer = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-<<<<<<< Updated upstream
-=======
                 <button type="submit">Populate</button>
                 </form>
             </div>
@@ -332,20 +298,19 @@ const CreateCustomer = () => {
                     onChange={(e) => setNewPassword(e.target.value)}
                     
                 />
->>>>>>> Stashed changes
                 <input
                     type="text"
                     placeholder="First Name"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    required
+                    
                 />
                 <input
                     type="text"
                     placeholder="Last Name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    required
+                    
                 />
                 <input
                     type="text"
@@ -362,31 +327,6 @@ const CreateCustomer = () => {
                     />
                     Wants Promotions
                 </label>
-<<<<<<< Updated upstream
-                <label>
-                    <input type="text" placeholder="Card Number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
-                    <input type="text" placeholder="Name on Card" value={cardName} onChange={(e) => setCardName(e.target.value)} />
-                    <input type="text" placeholder="CVC" value={cvc} onChange={(e) => setCVC(e.target.value)} />
-                    <input type="text" placeholder="expiration" value={expiration} onChange={(e) => setExpiration(e.target.value)} />
-                    Payment Card 1
-                </label>
-                <label>
-                    <input type="text" placeholder="Card Number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
-                    <input type="text" placeholder="Name on Card" value={cardName} onChange={(e) => setCardName(e.target.value)} />
-                    <input type="text" placeholder="CVC" value={cvc} onChange={(e) => setCVC(e.target.value)} />
-                    <input type="text" placeholder="expiration" value={expiration} onChange={(e) => setExpiration(e.target.value)} />
-                    Payment Card 2
-                </label>
-                <label>
-                    <input type="text" placeholder="Card Number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
-                    <input type="text" placeholder="Name on Card" value={cardName} onChange={(e) => setCardName(e.target.value)} />
-                    <input type="text" placeholder="CVC" value={cvc} onChange={(e) => setCVC(e.target.value)} />
-                    <input type="text" placeholder="expiration" value={expiration} onChange={(e) => setExpiration(e.target.value)} />
-                    Payment Card 3
-                </label>
-                <button type="submit">Save Edits</button>
-            </form>
-=======
                 <button type="submit">Save Changes</button>
                 </form>
                 </div>
@@ -422,11 +362,9 @@ const CreateCustomer = () => {
         <input type="String" placeholder="expiration" value={card4Expiration} onChange={(e) => setCard4Expiration(e.target.value)} />
       </div>
     </div>
-                </div>
->>>>>>> Stashed changes
+</div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
-        </div>
         </>
     );
 };

@@ -172,8 +172,6 @@ export async function getIsAdmin(accountId: number) {
 
   return res.rows[0].is_admin as boolean;
 };
-<<<<<<< Updated upstream
-=======
 
 export async function getCustomerData(accountId: number) {
   const queryText = `
@@ -198,4 +196,3 @@ export async function getCustomerData(accountId: number) {
 
   return res.rows[0];
 };
->>>>>>> Stashed changes
