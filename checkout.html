@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarView</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+    </header>
+
+    <main>
+        <h2>The Total is: [Total]</h2>
+        <form action="confirmation.html" method="POST">
+            <label for="purchaseMethod">Select Method of Purchase</label>
+            <select id="purchaseMethod" name="purchaseMethod" required>
+                <option value = "Credit Card 1">Credit Card 1</option>
+                <option value = "Debit Card 1">Debit Card 1</option>
+                <option value = "Gift Card 1">Gift Card 1</option>
+            </select>
+
+            <label for="addMethodofPurchase">Add Method of Purchase</label>
+            <p id="addMethodofPurchase" name="addMethodofPurchase"></p>
+                <p>
+                    <label for="ccn">Credit/Debit Card Number:</label>
+                    <input type="text" id="ccn" name="creditCardNumber" required>
+                    <label for="name">Name on Card:</label>
+                    <input type="text" id="name" name="creditCardName" required>
+                    <label for="name">Billing Address:</label>
+                    <input type="text" id="name" name="creditCardName" required>
+                    
+                </p>
+                <div style="text-align:center">
+                    <button>Add Method of Payment</button>
+                </div>
+            </p>
+
+            <div style="text-align:center">
+                <button type="submit"><a href="confirmation.html"></a>Cancel Payment</button>
+                <button type="submit"><a href="confirmation.html"></a>Confirm Payment</button>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cinema E-Booking</p>
+    </footer>
+
+    <script>
+        // Get the movie title from the query parameter and display it
+        const urlParams = new URLSearchParams(window.location.search);
+        const movie = urlParams.get('movie');
+        document.getElementById('movie-title').textContent = movie;
+    </script>
+</body>
+</html>
