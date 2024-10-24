@@ -1,4 +1,5 @@
 import { query } from "./database";
+import bcrypt from "bcrypt";
 
 export interface PaymentMethod {
   id: number;
@@ -26,8 +27,12 @@ export async function addPaymentMethod(accountId: number, opts: AddPaymentMethod
     throw new Error("Card number is too short.");
   }
 
-  // TODO: Encrypt!
-  const cardNumberCipher = opts.cardNumber;
+  // For real purposes, would be encrypted rather than hashed.
+  // But not work pulling in another library and dealing with
+  // private key storage when we'll never actually be using
+  // the encrypted data.
+  const salt = await bcrypt.genSalt();
+  const cardNumberCipher = await bcrypt.hash(opts.cardNumber, salt);
 
   const values = [accountId, cardNumberCipher, cardNumberLastFour, opts.billingAddress, opts.expirationDate];
   const res = await query(queryText, values);

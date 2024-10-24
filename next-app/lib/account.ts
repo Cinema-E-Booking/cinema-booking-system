@@ -1,4 +1,5 @@
 import { query } from "./database";
+import bcrypt from "bcrypt";
 
 export type CustomerStatus = "inactive" | "active" | "suspended";
 
@@ -30,8 +31,8 @@ export async function createCustomer(opts: CreateCustomerOpts): Promise<number> 
   RETURNING account_id;
   `;
 
-  // TODO: Hash!
-  const passwordHash = opts.password;
+  const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(opts.password, salt);
 
   const values = [opts.email, passwordHash, opts.firstName, opts.lastName, opts.wantsPromotions];
   const res = await query(queryText, values);
@@ -50,7 +51,7 @@ export async function setCustomerStatus(accountId: number, status: CustomerStatu
   await query(queryText, values);
 }
 
-export async function compareCustomerLogin(email: string | undefined, providedPassword: string | undefined) {
+export async function compareCustomerLogin(email: string, providedPassword: string) {
   const queryText = `
   SELECT password_hash
   FROM account as a
@@ -61,41 +62,30 @@ export async function compareCustomerLogin(email: string | undefined, providedPa
 
   const values = [email];
   const res = await query(queryText, values);
-  const storedPasswordHash = res.rows[0].password_hash;
+  if (res.rowCount === 0) {
+    return false;
+  }
 
-  // TODO: Hash!
-  const providedPasswordHash = providedPassword;
+  const storedPasswordHash = res.rows[0].password_hash.toString("utf-8");
 
-  // TODO: Compare hashes
-  return res.rows[0].password_hash.toString('utf-8') === providedPassword;
+  return bcrypt.compare(providedPassword, storedPasswordHash);
 }
 
-export async function getCustomerAccountId(email: string | undefined, providedPassword: string | undefined) {
+export async function getCustomerAccountId(email: string) {
   const queryText = `
-  SELECT a.id, a.password_hash
-  FROM account as a
-  JOIN customer as c
-  ON a.id = c.account_id
-  WHERE c.email = $1;
+  SELECT account_id
+  FROM customer
+  WHERE email = $1;
   `;
 
   const values = [email];
   const res = await query(queryText, values);
 
-  if (res.rows.length === 0) {
+  if (res.rowCount === 0) {
     return null; // No user found
   }
 
-  const storedPasswordHash = res.rows[0].password_hash;
-
-  // Compare the provided password with the stored hash
-  const passwordMatches = providedPassword === storedPasswordHash.toString('utf-8');
-
-  if (passwordMatches) {
-    return res.rows[0].id; // Return the account ID
-  } else {
-    return null; // Password does not match
-  }
+  return res.rows[0].account_id;
 }
 
 export type EditCustomerOpts = Partial<Omit<Customer, "accountId" | "email" | "state">>;
@@ -126,8 +116,8 @@ export async function createAdmin(opts: CreateAdminOpts) {
   `;
 
 
-  // TODO: Hash!
-  const passwordHash = opts.password;
+  const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(opts.password, salt);
 
   const values = [opts.employeeId, passwordHash, opts.title];
   const res = await query(queryText, values);
@@ -146,13 +136,9 @@ export async function compareAdminLogin(employeeId: string, providedPassword: st
 
   const values = [employeeId];
   const res = await query(queryText, values);
-  const storedPasswordHash = res.rows[0].password_hash;
+  const storedPasswordHash = res.rows[0].password_hash.toString("utf-8");
 
-  // TODO: Hash!
-  const providedPasswordHash = providedPassword;
-
-  // TODO: Compare hashes
-  return storedPasswordHash === providedPasswordHash;
+  return bcrypt.compare(providedPassword, storedPasswordHash);
 }
 
 export async function resetAccountPassword(accountId: string, newPassword: string) {
@@ -162,8 +148,8 @@ export async function resetAccountPassword(accountId: string, newPassword: strin
   WHERE id = $1;
   `;
 
-  // TODO: Hash!
-  const passwordHash = newPassword;
+  const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(newPassword, salt);
 
   const values = [accountId, passwordHash];
   await query(queryText, values);

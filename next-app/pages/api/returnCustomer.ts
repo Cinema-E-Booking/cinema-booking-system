@@ -3,7 +3,7 @@ import { compareCustomerLogin } from "@/lib/account";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<{}>,
+    res: NextApiResponse<{message: string}>,
   ) {
 
     const {email, password} = req.body;
