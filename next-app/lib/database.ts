@@ -46,7 +46,8 @@ CREATE TABLE IF NOT EXISTS customer (
   last_name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   state customer_state NOT NULL,
-  wants_promotions BOOLEAN NOT NULL
+  wants_promotions BOOLEAN NOT NULL,
+  billing_address TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS payment_method (

@@ -10,6 +10,7 @@ export interface Customer {
   email: string;
   status: CustomerStatus;
   wantsPromotions: boolean;
+  billingAddress: string;
 }
 
 export interface Admin {
@@ -26,15 +27,15 @@ export async function createCustomer(opts: CreateCustomerOpts): Promise<number> 
     VALUES ($2)
     RETURNING id
   )
-  INSERT INTO customer (account_id, email, first_name, last_name, wants_promotions, state)
-  VALUES ((SELECT id FROM new_id), $1, $3, $4, $5, 'active')
+  INSERT INTO customer (account_id, email, first_name, last_name, wants_promotions, state, billing_address)
+  VALUES ((SELECT id FROM new_id), $1, $3, $4, $5, 'active', $6)
   RETURNING account_id;
   `;
 
   const salt = await bcrypt.genSalt();
   const passwordHash = await bcrypt.hash(opts.password, salt);
 
-  const values = [opts.email, passwordHash, opts.firstName, opts.lastName, opts.wantsPromotions];
+  const values = [opts.email, passwordHash, opts.firstName, opts.lastName, opts.wantsPromotions, opts.billingAddress];
   const res = await query(queryText, values);
 
   return res.rows[0].account_id as number;
@@ -71,7 +72,7 @@ export async function compareCustomerLogin(email: string, providedPassword: stri
   return bcrypt.compare(providedPassword, storedPasswordHash);
 }
 
-export async function getCustomerAccountId(email: string) {
+export async function getCustomerAccountId(email: string | undefined) {
   const queryText = `
   SELECT account_id
   FROM customer
@@ -148,7 +149,9 @@ export async function resetAccountPassword(accountId: string, newPassword: strin
   WHERE id = $1;
   `;
 
-  const salt = await bcrypt.genSalt();
+  const salt = await bcrypt.genSalt(10);
+  console.log(salt);
+  console.log(newPassword);
   const passwordHash = await bcrypt.hash(newPassword, salt);
 
   const values = [accountId, passwordHash];
@@ -169,3 +172,30 @@ export async function getIsAdmin(accountId: number) {
 
   return res.rows[0].is_admin as boolean;
 };
+<<<<<<< Updated upstream
+=======
+
+export async function getCustomerData(accountId: number) {
+  const queryText = `
+  SELECT 
+    c.account_id,
+    c.email,
+    c.first_name,
+    c.last_name,
+    c.state,
+    c.wants_promotions,
+    c.billing_address
+  FROM
+    customer c
+  JOIN
+    account a ON c.account_id = a.id
+  WHERE
+    c.account_id = $1;
+  `;
+
+  const values = [accountId];
+  const res = await query(queryText, values);
+
+  return res.rows[0];
+};
+>>>>>>> Stashed changes

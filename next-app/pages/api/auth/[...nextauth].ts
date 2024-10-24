@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compareCustomerLogin, getCustomerAccountId } from '../../../lib/account'; 
+import { getCustomerAccountId } from '../../../lib/account'; 
 
 export const authOptions = {
   providers: [
@@ -15,9 +15,16 @@ export const authOptions = {
         }
 
         try {
+<<<<<<< Updated upstream
           const loginValid = await compareCustomerLogin(credentials.email, credentials.password);
           if (!loginValid) {
             return null;
+=======
+          const id = await getCustomerAccountId(credentials?.email);
+          const user = { id: id }
+          if (user) {
+            return user;
+>>>>>>> Stashed changes
           }
 
           const id = await getCustomerAccountId(credentials.email);

@@ -9,7 +9,7 @@ export interface PaymentMethod {
   expirationDate: Date;
 };
 
-type AddPaymentMethodOpts = Omit<PaymentMethod & {cardNumber: string}, "cardNumberLastFour" | "cardOwnerId">;
+export type AddPaymentMethodOpts = Omit<PaymentMethod & {cardNumber: string}, "cardNumberLastFour" | "cardOwnerId">;
 export async function addPaymentMethod(accountId: number, opts: AddPaymentMethodOpts) {
   const queryText = `
   INSERT INTO payment_method (
@@ -22,7 +22,7 @@ export async function addPaymentMethod(accountId: number, opts: AddPaymentMethod
   RETURNING id;
   `
 
-  const cardNumberLastFour = opts.cardNumber.substring(opts.cardNumber.substring.length - 4);
+  const cardNumberLastFour = opts.cardNumber.substring(opts.cardNumber.length - 4);
   if (cardNumberLastFour.length != 4) {
     throw new Error("Card number is too short.");
   }

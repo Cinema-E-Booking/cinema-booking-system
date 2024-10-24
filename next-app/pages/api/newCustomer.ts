@@ -6,14 +6,15 @@ export default async function handler(
     res: NextApiResponse<{}>,
   ) {
 
-    const {email, password, firstName, lastName, wantsPromotions, status} = req.body;
+    const {email, password, firstName, lastName, wantsPromotions, status, billingAddress} = req.body;
     const opts: CreateCustomerOpts = {
         email,
         password,
         firstName,
         lastName,
         wantsPromotions,
-        status
+        status,
+        billingAddress
     }
 
     try {
@@ -21,7 +22,7 @@ export default async function handler(
         return res.status(201).json({message: 'Customer created succesfully'});
     } catch (error) {
         console.error('Error creating customer:', error);
-        return res.status(500).json({message: 'An account with that email is detected.'});
+        return res.status(500).json({message: error});
     }
 
   }

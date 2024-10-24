@@ -8,6 +8,7 @@ const CreateCustomer = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [wantsPromotions, setWantsPromotions] = useState(false);
+    const [billingAddress, setBillingAddress] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -27,6 +28,7 @@ const CreateCustomer = () => {
             firstName,
             lastName,
             wantsPromotions,
+            billingAddress,
         };
 
         try {
@@ -118,6 +120,13 @@ const CreateCustomer = () => {
                     />
                     Wants Promotions
                 </label>
+                <input
+                    type="text"
+                    placeholder="Billing Address"
+                    value={billingAddress}
+                    onChange={(e) => setBillingAddress(e.target.value)}
+                    required
+                />
                 <button type="submit">Register</button>
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
