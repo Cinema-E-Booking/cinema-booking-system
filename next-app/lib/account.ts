@@ -52,7 +52,7 @@ export async function setCustomerStatus(accountId: number, status: CustomerStatu
   await query(queryText, values);
 }
 
-export async function compareCustomerLogin(email: string, providedPassword: string) {
+export async function compareCustomerLogin(email: any, providedPassword: any) {
   const queryText = `
   SELECT password_hash
   FROM account as a
@@ -150,8 +150,6 @@ export async function resetAccountPassword(accountId: string, newPassword: strin
   `;
 
   const salt = await bcrypt.genSalt(10);
-  console.log(salt);
-  console.log(newPassword);
   const passwordHash = await bcrypt.hash(newPassword, salt);
 
   const values = [accountId, passwordHash];
@@ -196,3 +194,23 @@ export async function getCustomerData(accountId: number) {
 
   return res.rows[0];
 };
+
+export async function returnUser(email: string) {
+  const queryText = `
+  SELECT
+    *
+  FROM
+    users
+  WHERE
+  email = $1
+  `;
+
+  const values = [email];
+  const res = await query(queryText, values);
+
+  if (res.rows.length > 0) {
+    return res.rows[0];
+  } else {
+    return null;
+  }
+}

@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useState } from 'react';
-import emailjs from "@emailjs/browser";
+import { signIn } from "next-auth/react";
 
 const CreateCustomer = () => {
     const [email, setEmail] = useState('');
@@ -40,20 +40,21 @@ const CreateCustomer = () => {
                 },
                 body: JSON.stringify(customerData),
             });
+            signIn("email", { email: email, callbackUrl: 'http://localhost:3000' });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message);
             }
 
-            sendEmail();
             setSuccess('Customer created successfully!');
         } catch (err) {
             setError(String(err));
         }
     };
 
-    const sendEmail = () => {
+    //Might need later for edit profile confirmation
+    /*const sendEmail = () => {
         const templateParams = {
           user_email: email,
           to_name: firstName
@@ -73,7 +74,7 @@ const CreateCustomer = () => {
           console.log('FAILED...', err);
         },
       );
-      }
+    }*/
 
     return (
         <>

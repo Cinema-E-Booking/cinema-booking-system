@@ -30,12 +30,11 @@ const Navbar = () => {
     <nav>
       {session ? (
         <div>
-          <button onClick={() => signOut()}>Logout</button>
+          <button onClick={() => signOut({callbackUrl: '/login'})}>Logout</button>
           <a href="http://localhost:3000/editProfile">editProfile</a>
         </div>
       ) : (
         <div>
-          <a href="http://localhost:3000/login">Login</a>
         </div>
       )}
     </nav>

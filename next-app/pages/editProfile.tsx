@@ -115,7 +115,6 @@ const CreateCustomer = () => {
             })
             .then(isValidRes => isValidRes.json())
             .then((data) => {
-                console.log(data.response);
                 const isValid = data.response;
 
 
@@ -201,10 +200,6 @@ const CreateCustomer = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
-
-        if ((cardId == String(1) || cardId == String(2) || cardId == String(3) || cardId == String(4))) {
-            setError('Please edit cards 1-4');
-        }
 
         try {
             fetch('./api/getId', {
