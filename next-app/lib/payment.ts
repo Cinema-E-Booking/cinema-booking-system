@@ -5,7 +5,6 @@ export interface PaymentMethod {
   id: number;
   cardOwnerId: number;
   cardNumberLastFour: string;
-  billingAddress: string;
   expirationDate: Date;
 };
 
@@ -16,9 +15,8 @@ export async function addPaymentMethod(accountId: number, opts: AddPaymentMethod
     card_owner_id,
     card_number,
     card_number_last_four,
-    billing_address,
     expiration_date
-  ) VALUES ($1, $2, $3, $4, $5)
+  ) VALUES ($1, $2, $3, $4)
   RETURNING id;
   `
 
@@ -34,7 +32,7 @@ export async function addPaymentMethod(accountId: number, opts: AddPaymentMethod
   const salt = await bcrypt.genSalt();
   const cardNumberCipher = await bcrypt.hash(opts.cardNumber, salt);
 
-  const values = [accountId, cardNumberCipher, cardNumberLastFour, opts.billingAddress, opts.expirationDate];
+  const values = [accountId, cardNumberCipher, cardNumberLastFour, opts.expirationDate];
   const res = await query(queryText, values);
 
   return res.rows[0].id as number;
@@ -55,7 +53,7 @@ export async function getPaymentMethodCount(accountId: number) {
 
 export async function getAllPaymentMethods(accountId: number) {
   const queryText = `
-  SELECT id, card_owner_id, card_number_last_four, expiration_date, billing_address
+  SELECT id, card_owner_id, card_number_last_four, expiration_date
   FROM payment_method
   WHERE card_owner_id = $1;
   `;
@@ -70,7 +68,6 @@ export async function getAllPaymentMethods(accountId: number) {
       cardOwnerId: row.card_owner_id,
       cardNumberLastFour: row.card_number_last_four,
       expirationDate: row.expiration_date,
-      billingAddress: row.billing_address,
     });
   }
 
@@ -97,16 +94,15 @@ export async function getPaymentMethod(cardId: number) {
   };
 }
 
-export type EditPaymentMethodOpts = Partial<Pick<PaymentMethod, "billingAddress" | "expirationDate">>;
+export type EditPaymentMethodOpts = Partial<Pick<PaymentMethod, "expirationDate">>;
 export async function editPaymentMethod(cardId: number, opts: EditPaymentMethodOpts) {
   const queryText = `
     UPDATE payment_method SET
-      billing_address = COALESCE($2, billing_address),
       expiration_date = COALESCE($3, expiration_date)
     WHERE id = $1;
   `;
 
-  const values = [cardId, opts.billingAddress, opts.expirationDate];
+  const values = [cardId, opts.expirationDate];
   await query(queryText, values);
 }
 

@@ -95,12 +95,15 @@ export async function editCustomer(accountId: number, opts: EditCustomerOpts) {
   UPDATE customer SET
     first_name = COALESCE($2, first_name),
     last_name = COALESCE($3, last_name),
-    wants_promotions = COALESCE($4, wants_promotions)
+    wants_promotions = COALESCE($4, wants_promotions),
+    billing_address = COALESCE($5, billing_address)
   WHERE account_id = $1;
   `;
 
-  const values = [accountId, opts.firstName, opts.lastName, opts.wantsPromotions];
-  await query(queryText, values);
+  const values = [accountId, opts.firstName, opts.lastName, opts.wantsPromotions, opts.billingAddress];
+  const response = await query(queryText, values);
+
+  return response;
 }
 
 export type CreateAdminOpts = Omit<Admin & {password: string}, "accountId">;

@@ -1,12 +1,15 @@
 import Head from "next/head";
 import { FormEvent, useState }  from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
+import { useRouter } from 'next/router';
 
 export default function login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,8 +20,8 @@ export default function login() {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify({email, password}),
-  });
+      body: JSON.stringify({username, password}),
+    });
 
   const data = await response.json();
   const dataResponse = await data.response;
@@ -27,7 +30,7 @@ export default function login() {
     const userDataResponse = await fetch('./api/returnUser', {
       method: 'POST',
       body: JSON.stringify({
-        email: email,
+        email: username,
       }),
       headers: { 'Content-Type': 'application/json' },
     });
@@ -40,16 +43,34 @@ export default function login() {
 
     if (user) {
       signIn('email', {
-        email: email,
+        email: username,
         callbackUrl: 'http://localhost:3000'
       });
     }
 
   } else {
-    setSuccess('');
-    setError('Login Failure: Incorrect Username or Password');
 
-    return null;
+    const adminDataResponse = await fetch('./api/returnAdmin', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const adminData = await adminDataResponse.json();
+    const admin = await adminData.response;
+
+    if (admin) {
+      console.log('admin login success')
+      router.push('/admin');
+    } else {
+      setSuccess('');
+      setError('Login Failure: Incorrect Username or Password');
+
+      return null;
+    }
   }
 }
   
@@ -64,10 +85,10 @@ export default function login() {
         <form onSubmit={handleSubmit} method="POST">
             <label htmlFor="email">Email:</label>
             <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                 />
             <label htmlFor="password">Password:</label>

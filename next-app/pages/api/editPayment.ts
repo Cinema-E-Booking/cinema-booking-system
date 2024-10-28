@@ -6,9 +6,8 @@ export default async function handler(
     res: NextApiResponse<{}>,
   ) {
 
-    const {cardId, billingAddress, expirationDate} = req.body;
+    const {cardId, expirationDate} = req.body;
     const opts: EditPaymentMethodOpts = {
-        billingAddress,
         expirationDate,
     }
 

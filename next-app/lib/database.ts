@@ -103,7 +103,6 @@ CREATE TABLE IF NOT EXISTS payment_method (
   card_owner_id INT NOT NULL REFERENCES account(id),
   card_number BYTEA NOT NULL,
   card_number_last_four CHAR(4) NOT NULL,
-  billing_address TEXT NOT NULL,
   expiration_date DATE NOT NULL,
 
   UNIQUE (card_owner_id, card_number)

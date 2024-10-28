@@ -6,17 +6,16 @@ export default async function handler(
     res: NextApiResponse<{}>,
   ) {
     
-    const {id, firstName, lastName, wantsPromotions} = req.body;
+    const {accountId, firstName, lastName, wantsPromotions, billingAddress} = req.body;
     const opts: EditCustomerOpts = {
         firstName,
         lastName,
-        wantsPromotions
+        wantsPromotions,
+        billingAddress
     }
-
     try {
-        const response = await editCustomer(id, opts);
-        console.log({response});
-
+        const response = await editCustomer(accountId, opts);
+        
         return res.status(201).json({ response });
     } catch (error) {
         console.error('Error changing customer details:', error);

@@ -6,16 +6,15 @@ export default async function handler(
     res: NextApiResponse<{}>,
   ) {
     
-    const { id } = req.body;
+    const { accountId } = req.body;
 
     try {
-        const response = await getAllPaymentMethods(id);
-        console.log({response});
+        const response = await getAllPaymentMethods(accountId);
 
         return res.status(200).json({ response });
     } catch (error) {
-        console.error('Error creating customer:', error);
-        return res.status(500).json({message: 'An account with that email is detected.'});
+        console.error('Error getting payment Methods', error);
+        return res.status(500).json({message: 'Error getting payment methods.'});
     }
 
   }

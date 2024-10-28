@@ -6,11 +6,10 @@ export default async function handler(
     res: NextApiResponse<{}>,
   ) {
 
-    const {accountId, cardNumber, billingAddress, expirationDate} = req.body;
+    const {accountId, cardNumber, expirationDate} = req.body;
     const opts: AddPaymentMethodOpts = {
         id: accountId,
         cardNumber,
-        billingAddress,
         expirationDate,
     }
 

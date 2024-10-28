@@ -3,9 +3,8 @@ import { FormEvent, useState }  from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 
-export default function changePassword() {
+export default function resetPassword() {
   const [newPassword, setNewPassword] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const {data: session} = useSession();
@@ -14,9 +13,9 @@ export default function changePassword() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!oldPassword || !newPassword ) {
+    if (!newPassword ) {
       setSuccess('')
-      setError('Please fill out both fields')
+      setError('Please enter a password')
 
       return null;
     }
@@ -32,20 +31,6 @@ export default function changePassword() {
         const userData = await userIdData.json();
         const userId = await userData.response;
 
-        const passwordResponse = await fetch('./api/returnCustomer', {
-          method: 'POST',
-          body: JSON.stringify({
-            email: session?.user?.email,
-            password: oldPassword,
-          }),
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        const passwordResponseData = await passwordResponse.json();
-        const passwordIsValid = passwordResponseData.response;
-        console.log('Password matches response: ', passwordIsValid)
-
-        if (passwordIsValid) {
           const userDataResponse = await fetch('./api/changePassword', {
             method: 'POST',
             body: JSON.stringify({
@@ -62,10 +47,6 @@ export default function changePassword() {
         setError('');
         setSuccess('Password Updated Succesfully!');
         router.push('/');
-        } else {
-          setSuccess('');
-          setError('Entered password is incorrect.')
-        }
 
         } catch (err) {
             console.log(err);
@@ -82,19 +63,12 @@ export default function changePassword() {
         <title>Login</title>
       </Head>
       <div className="container">
-        <h2>Change Password</h2>
+        <h2>New Password</h2>
         <p>
           Enter a new password and we will update it for you.
         </p>
         <form onSubmit={handleSubmit} method="POST">
             <label htmlFor="email">New Password:</label>
-            <input
-                    type="password"
-                    placeholder="Old Password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    required
-                />
             <input
                     type="password"
                     placeholder="New Password"

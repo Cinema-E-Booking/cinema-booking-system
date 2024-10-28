@@ -10,6 +10,13 @@ export default function forgotPassword() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!email) {
+      setSuccess('')
+      setError('Please enter an email')
+
+      return null;
+    }
+
     const userDataResponse = await fetch('./api/returnUser', {
       method: 'POST',
       body: JSON.stringify({
@@ -26,7 +33,7 @@ export default function forgotPassword() {
       setSuccess('Email sent! please click the link sent in the email');
       signIn('email', {
         email: email,
-        callbackUrl: 'http://localhost:3000/changePassword'
+        callbackUrl: 'http://localhost:3000/resetPassword'
       });
     } else {  
       setError('There is no user with that email')
