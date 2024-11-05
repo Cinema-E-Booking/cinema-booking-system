@@ -8,6 +8,7 @@ export default function Home() {
         <title>Manage Promotions</title>
       </Head>
       <header>
+        <a href="/admin"> Admin Home </a>
             <h1>Manage Promotions</h1>
       </header>
         <main>
