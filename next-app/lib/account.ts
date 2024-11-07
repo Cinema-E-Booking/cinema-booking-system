@@ -1,7 +1,7 @@
 import { query } from "./database";
 import bcrypt from "bcrypt";
 
-export type CustomerStatus = "inactive" | "active" | "suspended";
+export type CustomerStatus = "Active" | "Inactive" | "Suspended";
 
 export interface Customer {
   accountId: number;

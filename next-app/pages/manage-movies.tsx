@@ -1,5 +1,16 @@
 import Head from "next/head";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+type Movie = {
+    id: number,
+    title: string,
+    category: string,
+    rating: string,
+    synopsis: string,
+    trailer_url: string,
+    image_url: string,
+    duration: string,
+}
 
 const CreateMovie = () => {
     const [title, setTitle] = useState('');
@@ -11,6 +22,36 @@ const CreateMovie = () => {
     const [duration, setDuration] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [movies, setMovies] = useState([]);
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                const response = await fetch("/api/allMovies");
+                const result = await response.json();
+                console.log('manage check:', result.data);
+                console.log('manage check 2:', result.data[0]);
+                console.log('manage check 3:', result.data[0][1]);
+                
+                // Assuming the response structure is `{ data: Array(3) }`
+                if (result.data && Array.isArray(result.data)) {
+                    setMovies(result.data); // Set the fetched movies data
+                    setSuccess("Movies loaded");
+                } else {
+                    setError("Failed to load movies.");
+                }
+            } catch (error) {
+                setError("An error occurred while fetching movies.");
+            }
+        };
+
+        fetchMovies();
+    }, []);
+
+    useEffect(() => {
+        console.log('manage check 4:', movies);
+    }, [movies]);
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,6 +94,7 @@ const CreateMovie = () => {
         }
     };
 
+
     return (
         <>
       <Head>
@@ -94,24 +136,26 @@ const CreateMovie = () => {
             </form>
             <h2>Existing Movies</h2>
             <table>
-            <tbody>
-                <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Actions</th>
-                </tr>
-                {/* Example of a row (this should be dynamically generated in the real system) */}
-                <tr>
-                <td>movies</td>
-                <td>movies</td>
-                <td>movies</td>
-                <td>
-                    <button>Edit</button>
-                    <button>Delete</button>
-                </td>
-                </tr>
-            </tbody>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {movies.map((movie, index) => (
+                        <tr key={index}>
+                            <td>{movie[1]}</td>
+                            <td>{movie[4]}</td>
+                            <td>{movie[2]}</td>
+                            <td>
+                                <button>Delete</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </main>
         {error && <p style={{ color: 'red' }}>{error}</p>}

@@ -1,5 +1,7 @@
 import { query } from "./database";
 
+//export type film_rating = "nr" | "g" | "pg" | "pg-13" | "r" | "nc-17";
+
 export interface Movie {
     movieId: number;
     title: string;
@@ -31,12 +33,20 @@ export async function getAllMovies() {
     `;
 
     const res = await query(queryText);
+    console.log('Databse response:', res);
+    console.log('row Count:', res.rowCount);  
 
     if(res.rowCount == 0) {
         return null; // no movies found
     }
 
-    return res;
+    const data = {
+      rowCount: res.rowCount,
+      movies: res.rows.map((row) => Object.values(row)),
+    };
+    console.log(data.movies);
+
+    return data;
 }
 
 export async function getNowShowing() {
