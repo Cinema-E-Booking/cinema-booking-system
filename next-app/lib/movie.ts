@@ -1,17 +1,17 @@
 import { query } from "./database";
 
-//export type film_rating = "nr" | "g" | "pg" | "pg-13" | "r" | "nc-17";
+export type FilmRating = "nr" | "g" | "pg" | "pg-13" | "r" | "nc-17";
 
 export interface Movie {
-    movieId: number;
-    title: string;
-    category: string;
-    rating: string;
-    synopsis: string;
-    trailer_url: string;
-    image_url: string;
-    duration: string;
-  }
+  movieId: number;
+  title: string;
+  category: string;
+  rating: FilmRating;
+  synopsis: string;
+  trailer_url: string;
+  image_url: string;
+  duration: string;
+}
 
 export type CreateMovieOpts = Omit<Movie, "movieId">;
 export async function createMovie(opts: CreateMovieOpts): Promise<number> {
@@ -27,8 +27,31 @@ export async function createMovie(opts: CreateMovieOpts): Promise<number> {
     return res.rows[0].id as number;
 }
 
+export async function getMovie(movieId: number): Promise<Movie> {
+  const queryText = `
+    SELECT
+      id, title, category, rating, synopsis, trailer_url, image_url, duration
+    FROM movie
+    WHERE id = $1;
+  `;
+
+  const values = [movieId];
+  const res = await query(queryText, values);
+
+  return {
+    movieId: res.rows[0].id,
+    title: res.rows[0].title,
+    category: res.rows[0].category,
+    rating: res.rows[0].rating,
+    synopsis: res.rows[0].synopsis,
+    trailer_url: res.rows[0].trailer_url,
+    image_url: res.rows[0].image_url,
+    duration: res.rows[0].duration,
+  };
+};
+
 export async function getAllMovies() {
-    const queryText =`
+    const queryText = `
     SELECT * FROM movie
     `;
 
@@ -49,6 +72,8 @@ export async function getAllMovies() {
     return data;
 }
 
+
+
 export async function getNowShowing() {
     const queryText = `
     SELECT title, category, rating, synopsis, trailer_url, image_url, duration
@@ -65,3 +90,41 @@ export async function getNowShowing() {
   
     return res;
   }
+
+export interface GetMoviesOpts {
+  title: string;
+  // showingAfter: Date;
+  // showingBefore: Date;
+  category: string;
+  limit: number;
+}
+export async function getMovies(opts: Partial<GetMoviesOpts>) {
+  const queryText = `
+  SELECT
+    id, title, category, rating, synopsis, trailer_url, image_url, duration
+  FROM movie
+  WHERE
+    (($2 IS NULL) OR ($2 % title)) AND
+    (($3 IS NULL) OR ($3 = category))
+  LIMIT coalesce($1, 25);
+  `;
+
+  const values = [opts.limit, opts.title, opts.category];
+  const res = await query(queryText, values);
+
+  const out: Movie[] = [];
+  for (const row of res.rows) {
+    out.push({
+      movieId: row.id,
+      title: row.title,
+      category: row.category,
+      rating: row.rating,
+      synopsis: row.synopsis,
+      trailer_url: row.trailer_url,
+      image_url: row.image_url,
+      duration: row.duration,
+    });
+  }
+
+  return out;
+};

@@ -145,6 +145,9 @@ CREATE TABLE IF NOT EXISTS promotion (
   end_time TIMESTAMP NOT NULL
 );
 
+ALTER TABLE promotion
+ADD COLUMN IF NOT EXISTS editable BOOLEAN DEFAULT TRUE;
+
 CREATE TABLE IF NOT EXISTS booking (
   id SERIAL PRIMARY KEY,
   customer_id INT NOT NULL REFERENCES account(id),
@@ -166,5 +169,45 @@ CREATE TABLE IF NOT EXISTS booked_ticket (
   
   PRIMARY KEY (booking_id, ticket_id)
 );
+
+-- Changing how tickets and seats are done
+
+DROP TABLE IF EXISTS booked_ticket;
+DROP TABLE IF EXISTS ticket;
+DROP TABLE IF EXISTS showing;
+DROP TABLE IF EXISTS showroom;
+DROP TABLE IF EXISTS theater;
+
+CREATE TABLE IF NOT EXISTS auditorium (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS seat (
+  id SERIAL PRIMARY KEY,
+  row INT NOT NULL,
+  number INT NOT NULL,
+  auditorium_id INT NOT NULL REFERENCES auditorium(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS screening (
+  id SERIAL PRIMARY KEY,
+  movie_id INT NOT NULL REFERENCES movie(id),
+  auditorium_id INT NOT NULL REFERENCES auditorium(id),
+  start_time TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ticket (
+  id SERIAL PRIMARY KEY,
+  screening_id INT NOT NULL REFERENCES screening(id),
+  seat_id INT NOT NULL REFERENCES seat(id),
+  booking_id INT NOT NULL REFERENCES booking(id),
+  tick_type ticket_type NOT NULL,
+
+  UNIQUE (screening_id, seat_id)
+);
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX IF NOT EXISTS idx_movie_title ON move USING gist(title gist_trgm_ops);
 `;
 query(schema).catch(err => console.error(err))

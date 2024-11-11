@@ -101,9 +101,7 @@ export async function editCustomer(accountId: number, opts: EditCustomerOpts) {
   `;
 
   const values = [accountId, opts.firstName, opts.lastName, opts.wantsPromotions, opts.billingAddress];
-  const response = await query(queryText, values);
-
-  return response;
+  await query(queryText, values);
 }
 
 export type CreateAdminOpts = Omit<Admin & {password: string}, "accountId">;
