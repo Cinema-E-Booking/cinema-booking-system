@@ -150,7 +150,7 @@ export async function getMovies(opts: Partial<GetMoviesOpts>) {
 };
 
 export async function deleteMovie(movieId: number) {
-  const queryText = `DELETE * FROM movie WHERE id = $1`;
+  const queryText = `DELETE FROM movie WHERE id = $1`;
   const values = [movieId];
   console.log('server check:',movieId);
 

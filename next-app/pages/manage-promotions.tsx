@@ -29,6 +29,24 @@ const CreatePromotion = () => {
     fetchPromotions();
 }, []);
 
+const fetchEmails = async () => {
+  try{
+      const response = await fetch(`./api/getEmails`);
+      const result = await response.json();
+
+      if(response.ok) {
+        console.log('emails check:', result);
+          //setMovies((prevMovies) => prevMovies.filter((movie) => movie[0] !== id));
+          setSuccess("Movie deleted successfully");
+      } else {
+          const errorData = await response.json();
+          setError(errorData.message);
+      }
+  } catch (error) {
+      setError("Error happened while deleting movie");
+  }
+};
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -104,6 +122,7 @@ const CreatePromotion = () => {
                   <td>{promotion[2]}</td>
                   <td>
                     <button>Delete</button>
+                    <button onClick={() => fetchEmails()}>Send Promotion</button>
                   </td>
                 </tr>
               ))}
