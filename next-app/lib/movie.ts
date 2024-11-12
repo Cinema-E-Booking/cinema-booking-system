@@ -93,23 +93,43 @@ export async function getNowShowing() {
 
 export interface GetMoviesOpts {
   title: string;
-  // showingAfter: Date;
-  // showingBefore: Date;
+  showingAfter: Date;
+  showingBefore: Date;
   category: string;
   limit: number;
 }
 export async function getMovies(opts: Partial<GetMoviesOpts>) {
   const queryText = `
   SELECT
-    id, title, category, rating, synopsis, trailer_url, image_url, duration
+    m.id,
+    m.title,
+    m.category,
+    m.rating,
+    m.synopsis,
+    m.trailer_url,
+    m.image_url,
+    m.duration
   FROM movie
   WHERE
-    (($2 IS NULL) OR ($2 % title)) AND
-    (($3 IS NULL) OR ($3 = category))
+    (($2 IS NULL) OR ($2 % m.title)) AND
+    (($3 IS NULL) OR ($3 = m.category)) AND
+    (($4 IS NULL) OR (m.id IN (
+      SELECT s.id FROM screening AS s WHERE $4 <= s.start_time
+    )) AND 
+    (($5 IS NULL) OR (m.id IN (
+      SELECT s.id FROM screening AS s WHERE $5 >= (s.start_time + m.duration)
+    ))
   LIMIT coalesce($1, 25);
   `;
 
-  const values = [opts.limit, opts.title, opts.category];
+  const values = [
+    opts.limit,
+    opts.title, 
+    opts.category,
+    opts.showingAfter,
+    opts.showingBefore,
+  ];
+
   const res = await query(queryText, values);
 
   const out: Movie[] = [];
