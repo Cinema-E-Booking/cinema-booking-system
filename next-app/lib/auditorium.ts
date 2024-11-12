@@ -170,3 +170,34 @@ export async function getScreening(screeningId: number): Promise<Screening> {
     startTime: res.rows[0].start_time,
   };
 }
+
+// Will return all screenings for a movie.
+// If futureOnly is true, it will only return upcoming screenings
+export async function getMovieScreenings(movieId: number, futureOnly: boolean) {
+  // Pretty inefficient code, but not enough movies for this to actually matter
+  const queryText = `
+  SELECT
+    id
+  FROM screening
+  WHERE
+    movie_id = $1 AND
+    ($2 OR (start_time > NOW()));
+  `;
+
+  const values = [movieId, futureOnly];
+  const res = await query(queryText, values);
+
+  const screenings: Screening[] = [];
+  for (const row of res.rows) {
+    screenings.push(await getScreening(row.id));
+  }
+
+  return screenings;
+}
+
+// Returns true if the created screening would conflict with an existing
+// sreening.
+export async function screeningWouldConflict(opts: CreateScreeningOpts) {
+  // TODO
+  return false;
+};
