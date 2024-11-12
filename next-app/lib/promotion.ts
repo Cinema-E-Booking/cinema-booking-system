@@ -41,6 +41,28 @@ export async function getPromotion(code: Promotion): Promise<Promotion | null> {
   }
 }
 
+export async function getAllPromotions() {
+  const queryText = `
+  SELECT * FROM promotion
+  `;
+
+  const res = await query(queryText);
+  console.log('Databse response:', res);
+  console.log('row Count:', res.rowCount);  
+
+  if(res.rowCount == 0) {
+      return null; // no movies found
+  }
+
+  const data = {
+    rowCount: res.rowCount,
+    promotions : res.rows.map((row) => Object.values(row)),
+  };
+  console.log(data.promotions);
+
+  return data;
+}
+
 // Returns all emails for users opted into promotions
 export async function getEmailsForPromotions() {
   const queryText = `

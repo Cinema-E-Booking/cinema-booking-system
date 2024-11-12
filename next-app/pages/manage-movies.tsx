@@ -181,7 +181,7 @@ const CreateMovie = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {success && <p style={{ color: 'green' }}>{success}</p>}
         <footer>
-            <p>© 2024 Cinema E-Booking - Admin Panel</p>
+            <p>© 2024 Cinema E-Booking - Manage Movies</p>
         </footer>
         </>
     );
