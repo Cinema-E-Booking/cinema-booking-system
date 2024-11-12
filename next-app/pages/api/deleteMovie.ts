@@ -8,15 +8,9 @@ export default async function handler(
   ) {
    
     try {
-        const { movieId } = req.query;
-        console.log('query api check:', req.query);
-        const id = parseInt(movieId as string, 10);
-        console.log('pwease:',id);
-        console.log('api check:',movieId);
-        const result = await deleteMovie(id);
-        console.log('deleteMovie Check:', result);
-
-
+        const { id } = req.query;
+        const movieId = parseInt(String(id), 10);
+        const result = await deleteMovie(movieId);
         res.status(200).json({ result });
     } catch (error) {
         console.error('Error deleting movies:', error);
