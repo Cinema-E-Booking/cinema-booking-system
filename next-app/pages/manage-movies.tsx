@@ -29,13 +29,13 @@ const CreateMovie = () => {
             try {
                 const response = await fetch("/api/allMovies");
                 const result = await response.json();
-                console.log('manage check:', result.data);
-                console.log('manage check 2:', result.data[0]);
-                console.log('manage check 3:', result.data[0][1]);
+                //console.log('manage check:', result.data);
+                //console.log('manage check 2:', result.data.movies[0]);
+                //console.log('manage check 3:', result.data.movies[0][1]);
                 
                 // Assuming the response structure is `{ data: Array(3) }`
-                if (result.data && Array.isArray(result.data)) {
-                    setMovies(result.data); // Set the fetched movies data
+                if (result.data && Array.isArray(result.data.movies)) {
+                    setMovies(result.data.movies); // Set the fetched movies data
                     setSuccess("Movies loaded");
                 } else {
                     setError("Failed to load movies.");
@@ -48,9 +48,29 @@ const CreateMovie = () => {
         fetchMovies();
     }, []);
 
-    useEffect(() => {
-        console.log('manage check 4:', movies);
-    }, [movies]);
+    //useEffect(() => {
+    //    console.log('manage check 4:', movies);
+    //}, [movies]);
+
+    const deleteMovie = async (id: number) => {
+        console.log('client side check:',id);
+        try{
+            const response = await fetch(`./api/deleteMovie?id=${id}`, {
+                method: "DELETE",
+            });
+
+            if(response.ok) {
+                setMovies((prevMovies) => prevMovies.filter((movie) => movie[0] !== id));
+                setSuccess("Movie deleted successfully");
+            } else {
+                const errorData = await response.json();
+                setError(errorData.message);
+            }
+        } catch (error) {
+            setError("Error happened while deleting movie");
+        }
+    };
+
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -151,7 +171,7 @@ const CreateMovie = () => {
                             <td>{movie[4]}</td>
                             <td>{movie[2]}</td>
                             <td>
-                                <button>Delete</button>
+                                <button onClick={() => deleteMovie(movie[0])}>Delete</button>
                             </td>
                         </tr>
                     ))}
