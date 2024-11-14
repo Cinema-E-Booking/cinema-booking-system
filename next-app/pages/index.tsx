@@ -13,6 +13,8 @@ const Home = () => {
   const router = useRouter();
   const [nsIndex, setNSIndex] = useState(0);
   const [csIndex, setCSIndex] = useState(0);
+  const [search, setSearch] = useState('');
+  const [searchStatus, setSearchStatus] = useState('');
 
 
 
@@ -73,6 +75,30 @@ const Home = () => {
     });
   };
 
+  const fetchSearchMovies = async () => {
+    try {
+        const response = await fetch(`/api/searchMovies?title=${search}`);
+        const result = await response.json();
+        console.log('search check:', result.result);
+        //console.log('index check 2:', result.data.movies[0]);
+        //console.log('index check 3:', result.data.movies[0][2]);
+        
+        // Assuming the response structure is `{ data: Array(3) }`
+        if (result.result !== undefined) {
+            //setMovies(result.data.movies); // Set the fetched movies data
+            //setRowCount(result.data.rowCount);
+            console.log('search check 2:', result.result.movieId);
+            goToMoviePage(result.result.movieId);
+            //setSuccess("Movies loaded");
+            //setSearchStatus("No Such Movie");
+        } else {
+            setSearchStatus("No Such Movie");
+        }
+    } catch (error) {
+        setError("An error occurred while fetching movies.");
+    }
+};
+
   const nextNowShowing = () => {
     setNSIndex((prevIndex) => (prevIndex + 3) % nsMovies.length);
   };
@@ -87,6 +113,14 @@ const Home = () => {
   
   const prevComingSoon = () => {
     setCSIndex((prevIndex) => (prevIndex - 3 + csMovies.length) % csMovies.length);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  const handleSearch = () => {
+    fetchSearchMovies();
   };
   
 
@@ -104,7 +138,9 @@ const Home = () => {
             <input
               type="text"
               id="search-bar"
-              placeholder="Search for a movie..."
+              placeholder="Search for a Movie..."
+              value={search}
+              onChange={handleSearchChange}
             />
             <select id="genre-dropdown">
               <option value="all">All Genres</option>
@@ -114,12 +150,13 @@ const Home = () => {
               <option value="Animation">Animation</option>
               <option value="Mystery">Mystery</option>
             </select>
-            <button id="search-btn" className="btn">
+            <button id="search-btn" className="btn" onClick={handleSearch}>
              Search
             </button>
           </div>
         </div>
       </header>
+      {searchStatus && <p style={{ color: 'red' }}>{searchStatus}</p>}
       <main>
         <h2>Now Showing</h2>
         <div id="now-showing" className="movie-grid">

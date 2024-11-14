@@ -50,6 +50,29 @@ export async function getMovie(movieId: number): Promise<Movie> {
   };
 };
 
+export async function searchMovies(title: string): Promise<Movie> {
+  const queryText = `
+    SELECT
+      title, id, category, rating, synopsis, trailer_url, image_url, duration
+    FROM movie
+    WHERE title = $1;
+  `;
+
+  const values = [title];
+  const res = await query(queryText, values);
+
+  return {
+    movieId: res.rows[0].id,
+    title: res.rows[0].title,
+    category: res.rows[0].category,
+    rating: res.rows[0].rating,
+    synopsis: res.rows[0].synopsis,
+    trailer_url: res.rows[0].trailer_url,
+    image_url: res.rows[0].image_url,
+    duration: res.rows[0].duration,
+  };
+};
+
 export async function getAllMovies() {
     const queryText = `
     SELECT * FROM movie
