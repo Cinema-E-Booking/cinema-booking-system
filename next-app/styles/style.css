@@ -24,6 +24,10 @@ th, td {
     text-align: center;
 }
 
+iframe {
+    align-self: center;
+}
+
 .container {
     max-width: 400px;
     margin: 50px auto;

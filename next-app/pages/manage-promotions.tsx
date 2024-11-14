@@ -8,6 +8,9 @@ const CreatePromotion = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [promotions, setPromotions] = useState([]);
+  const [emailList, setEmailList] = useState<string[]>([]);
+  const [subject, setSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -29,25 +32,57 @@ const CreatePromotion = () => {
     fetchPromotions();
 }, []);
 
-const fetchEmails = async () => {
+const fetchEmails = async (promo: Array<String>) => {
+  setSubject("Movie Savings Deals!");
+  setEmailMessage("Use code " + promo[0] + " to save up to " + promo[1] +"% at checkout. Valid now through " + promo[2]);
   try{
       const response = await fetch(`./api/getEmails`);
       const result = await response.json();
 
       if(response.ok) {
-        console.log('emails check:', result);
+        console.log('email check 1:', result);
+        setEmailList(result);
+        setSuccess("Email created");
+        //console.log('emails check:', emailList);
           //setMovies((prevMovies) => prevMovies.filter((movie) => movie[0] !== id));
-          setSuccess("Movie deleted successfully");
+          //setSuccess("Movie deleted successfully");
       } else {
           const errorData = await response.json();
           setError(errorData.message);
       }
   } catch (error) {
-      setError("Error happened while deleting movie");
+      setError("Error happened while fetching emails");
   }
 };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const sendEmails = async () => {
+  try{
+      //console.log('promo code check:',promo);
+      //console.log('email check:', emailList);
+      //setEmailMessage("Use code " + promo[0] + " to save up to " + promo[1] +"% at checkout. Valid now through " + promo[2]);
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailList, subject, emailMessage }),
+      });
+
+      if(!response.ok) {
+        setError("Error sending promotion emails:");
+      }
+  } catch (error) {
+      setError("Error happened while sending promotion emails");
+  }
+};
+
+useEffect(() => {
+    console.log('message Check:', emailMessage);
+}, [emailMessage]);
+
+useEffect(() => {
+  console.log('email Check:', emailList);
+}, [emailList]);
+
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -122,7 +157,8 @@ const fetchEmails = async () => {
                   <td>{promotion[2]}</td>
                   <td>
                     <button>Delete</button>
-                    <button onClick={() => fetchEmails()}>Send Promotion</button>
+                    <button onClick={() => fetchEmails(promotion)}>Create Promo Email</button>
+                    <button onClick={() => sendEmails()}>Send Promotion</button>
                   </td>
                 </tr>
               ))}

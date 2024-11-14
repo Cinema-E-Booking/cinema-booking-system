@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useState, useEffect } from 'react';
 import Script from "next/script";
+import { useRouter } from 'next/router';
 
 const Home = () => {
   const [error, setError] = useState('');
@@ -9,6 +10,7 @@ const Home = () => {
   const [nsMovies, setNSMovies] = useState([]);
   const [csMovies, setCSMovies] = useState([]);
   const [rowCount, setRowCount] = useState();
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -60,6 +62,14 @@ const Home = () => {
     divideMovies();
   }, [movies]);
 
+  const goToMoviePage = (movieId: string) => {
+    const id: number = parseInt(movieId, 10);
+    router.push({
+      pathname: '/moviePage',
+      query: {id},
+    });
+  };
+
 
   useEffect(() => {
     console.log('nsMovies check:', nsMovies);
@@ -110,7 +120,8 @@ const Home = () => {
                     <div className="movie" key={index}>
                       <img src={movie[6]} width="300" height="450" />
                       <h3>{movie[1]}</h3>
-                      <p>{movie[4]}</p>
+                      <p>Rated: {movie[3]}</p>
+                      <button onClick={() => goToMoviePage(movie[0])}>View Movie</button>
                     </div>
                 ))}
                 </div>
@@ -128,7 +139,8 @@ const Home = () => {
                     <div className="movie" key={index}>
                       <img src={movie[6]} width="300" height="450" />
                       <h3>{movie[1]}</h3>
-                      <p>{movie[4]}</p>
+                      <p>Rated: {movie[3]}</p>
+                      <button onClick={() => goToMoviePage(movie[0])}>View Movie</button>
                     </div>
                 ))}
                 </div>
