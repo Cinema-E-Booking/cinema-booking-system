@@ -11,6 +11,9 @@ const Home = () => {
   const [csMovies, setCSMovies] = useState([]);
   const [rowCount, setRowCount] = useState();
   const router = useRouter();
+  const [nsIndex, setNSIndex] = useState(0);
+  const [csIndex, setCSIndex] = useState(0);
+
 
 
   useEffect(() => {
@@ -70,14 +73,22 @@ const Home = () => {
     });
   };
 
-
-  useEffect(() => {
-    console.log('nsMovies check:', nsMovies);
-  }, [nsMovies]);
-
-  useEffect(() => {
-    console.log('csMovies check:', csMovies);
-  }, [csMovies]);
+  const nextNowShowing = () => {
+    setNSIndex((prevIndex) => (prevIndex + 3) % nsMovies.length);
+  };
+  
+  const prevNowShowing = () => {
+    setNSIndex((prevIndex) => (prevIndex - 3 + nsMovies.length) % nsMovies.length);
+  };
+  
+  const nextComingSoon = () => {
+    setCSIndex((prevIndex) => (prevIndex + 3) % csMovies.length);
+  };
+  
+  const prevComingSoon = () => {
+    setCSIndex((prevIndex) => (prevIndex - 3 + csMovies.length) % csMovies.length);
+  };
+  
 
   return (
     <>
@@ -113,10 +124,10 @@ const Home = () => {
         <h2>Now Showing</h2>
         <div id="now-showing" className="movie-grid">
           <div className="slider-container">
-            <span className="prev-btn arrow">&#10094;</span>
+            <span className="prev-btn arrow" onClick={prevNowShowing}>&#10094;</span>
             <div className="movie-slider">
                 <div className="movie-slide">
-                {nsMovies.map((movie, index) => (
+                {nsMovies.slice(nsIndex, nsIndex + 3).map((movie, index) => (
                     <div className="movie" key={index}>
                       <img src={movie[6]} width="300" height="450" />
                       <h3>{movie[1]}</h3>
@@ -126,16 +137,16 @@ const Home = () => {
                 ))}
                 </div>
             </div>
-          <span className="next-btn arrow">&#10095;</span> 
+          <span className="next-btn arrow" onClick={nextNowShowing}>&#10095;</span> 
           </div>
         </div>
         <h2>Coming Soon</h2>
         <div id="coming-soon" className="movie-grid">
           <div className="slider-container">
-            <span className="prev-btn arrow">&#10094;</span>
+            <span className="prev-btn arrow" onClick={prevComingSoon}>&#10094;</span>
             <div className="movie-slider">
                 <div className="movie-slide">
-                {csMovies.map((movie, index) => (
+                {csMovies.slice(csIndex, csIndex + 3).map((movie, index) => (
                     <div className="movie" key={index}>
                       <img src={movie[6]} width="300" height="450" />
                       <h3>{movie[1]}</h3>
@@ -145,7 +156,7 @@ const Home = () => {
                 ))}
                 </div>
             </div>
-          <span className="next-btn arrow">&#10095;</span> 
+          <span className="next-btn arrow" onClick={nextComingSoon}>&#10095;</span> 
           </div>
         </div>
       </main>
