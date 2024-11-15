@@ -14,7 +14,9 @@ const Home = () => {
   const [nsIndex, setNSIndex] = useState(0);
   const [csIndex, setCSIndex] = useState(0);
   const [search, setSearch] = useState('');
+  const [rating, setRating] = useState('all');
   const [searchStatus, setSearchStatus] = useState('');
+  const [ratedMovies, setRatedMovies] = useState([]);
 
 
 
@@ -75,6 +77,13 @@ const Home = () => {
     });
   };
 
+  const goToRatedMoviePage = (rating: string) => {
+    router.push({
+      pathname: '/ratedMovies',
+      query: {rating},
+    });
+  };
+
   const fetchSearchMovies = async () => {
     try {
         const response = await fetch(`/api/searchMovies?title=${search}`);
@@ -99,6 +108,28 @@ const Home = () => {
     }
 };
 
+const fetchRatedMovies = async () => {
+  try {
+      const response = await fetch(`/api/searchRatings?rating=${rating}`);
+      const result = await response.json();
+      console.log('rating check:', result);
+      console.log('rating check 2:', result.result.movies);
+      //console.log('index check 2:', result.data.movies[0]);
+      //console.log('index check 3:', result.data.movies[0][2]);
+      
+      // Assuming the response structure is `{ data: Array(3) }`
+      if (result.result && Array.isArray(result.result.movies)) {
+        //setRatedMovies(result.result.movies); // Set the fetched movies data
+        //setRowCount(result.result.rowCount);
+        goToRatedMoviePage(rating);
+      } else {
+          setSearchStatus("No Such Movie");
+      }
+  } catch (error) {
+      setError("An error occurred while fetching movies.");
+  }
+};
+
   const nextNowShowing = () => {
     setNSIndex((prevIndex) => (prevIndex + 3) % nsMovies.length);
   };
@@ -119,8 +150,16 @@ const Home = () => {
     setSearch(e.target.value);
   };
 
+  const handleRatingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRating(e.target.value);
+  };
+
   const handleSearch = () => {
-    fetchSearchMovies();
+    if(rating === 'all') {
+      fetchSearchMovies();
+    } else {
+      fetchRatedMovies();
+    }
   };
   
 
@@ -142,13 +181,14 @@ const Home = () => {
               value={search}
               onChange={handleSearchChange}
             />
-            <select id="genre-dropdown">
-              <option value="all">All Genres</option>
-              <option value="Action">Action</option>
-              <option value="Romance">Romance</option>
-              <option value="Comedy">Comedy</option>
-              <option value="Animation">Animation</option>
-              <option value="Mystery">Mystery</option>
+            <select id="rating-dropdown" value={rating} onChange={handleRatingChange}>
+              <option value="all">All Ratings</option>
+              <option value="g">G</option>
+              <option value="pg">PG</option>
+              <option value="pg-13">PG-13</option>
+              <option value="r">R</option>
+              <option value="nc-17">nc-17</option>
+              <option value="nr">NR</option>
             </select>
             <button id="search-btn" className="btn" onClick={handleSearch}>
              Search

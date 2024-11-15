@@ -143,6 +143,7 @@ const CreateMovie = () => {
                 <option value="pg-13">PG-13</option>
                 <option value="r">R</option>
                 <option value="nc-17">NC-17</option>
+                <option value="nr">NR</option>
             </select>
             <label htmlFor="duration">Duration:</label>
             <input type="text" placeholder="Duration" value={duration} onChange={(e) => setDuration(e.target.value)} required />

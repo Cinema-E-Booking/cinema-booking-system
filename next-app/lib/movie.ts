@@ -73,14 +73,39 @@ export async function searchMovies(title: string): Promise<Movie> {
   };
 };
 
+export async function searchRating(rating: string) {
+  const queryText = `
+    SELECT
+      rating, title, id, category, synopsis, trailer_url, image_url, duration
+    FROM movie
+    WHERE rating = $1;
+  `;
+
+  const values = [rating];
+  const res = await query(queryText, values);
+  console.log('rating search database check:', res);
+
+  if(res.rowCount == 0) {
+    return null; // no movies found
+  }
+
+  const data = {
+    rowCount: res.rowCount,
+    movies: res.rows.map((row) => Object.values(row)),
+  };
+  //console.log(data.movies);
+
+  return data;
+};
+
 export async function getAllMovies() {
     const queryText = `
     SELECT * FROM movie
     `;
 
     const res = await query(queryText);
-    console.log('Databse response:', res);
-    console.log('row Count:', res.rowCount);  
+    //console.log('Databse response:', res);
+    //console.log('row Count:', res.rowCount);  
 
     if(res.rowCount == 0) {
         return null; // no movies found
@@ -90,7 +115,7 @@ export async function getAllMovies() {
       rowCount: res.rowCount,
       movies: res.rows.map((row) => Object.values(row)),
     };
-    console.log(data.movies);
+    //console.log(data.movies);
 
     return data;
 }
