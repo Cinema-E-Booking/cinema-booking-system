@@ -1,8 +1,8 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const resend = new Resend('re_eq9kibr3_EG81JVSrGPrUAVyV318bTkou');
-
+//const resend = new Resend('re_eq9kibr3_EG81JVSrGPrUAVyV318bTkou');
+//console.log(resend.domains.create({ name: 'cinemabooking.com' }));
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if(req.method === 'POST') {
@@ -12,16 +12,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log('api subject:', subject);
         console.log('api message check', emailMessage);
 
-        try {
-            const data = await resend.emails.send({
-                from: 'Acme <onboarding@resend.dev>',
+
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+            from: 'Acme <onboarding@resend.dev>',
+            to: emailList.data,
+            subject: subject,
+            html: emailMessage,
+        });
+
+        try{
+            const mailOptions = {
+                from: process.env.EMAIL_SERVER_USER,
                 to: emailList.data,
                 subject: subject,
                 html: emailMessage,
-            });
+            };
 
-            res.status(200).json({ message: 'Email sent successfully', data});
-            console.log("Email sent successfully", data);
+            await transporter.sendMail(mailOptions);
+
+
+            res.status(200).json({ message: 'Email sent successfully' });
+            console.log("Email sent successfully");
         } catch (error) {
             console.error('Error sending email:', error);
             res.status(500).json({ error: 'Failed to send email' });
