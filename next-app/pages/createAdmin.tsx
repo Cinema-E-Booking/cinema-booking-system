@@ -3,7 +3,7 @@ import { FormEvent, useState }  from "react";
 import { signIn, useSession } from "next-auth/react";
 
 export default function login() {
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [employeeId, setEmployeeId] = useState('');
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
@@ -13,19 +13,33 @@ export default function login() {
     e.preventDefault();
 
     try {
-    const response = await fetch('./api/newAdmin', {
+
+      const response = await fetch('./api/returnUser', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({email: username}),
+    });
+    const userData = await response.json();
+    const userId = await userData.response;
+    const id = userId.id;
+
+    await fetch('./api/newAdmin', {
       method: 'POST',
       headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify({employeeId, title, password}),
+      body: JSON.stringify({accountId: id, employeeId: employeeId, title: title}),
     });
 
   setError('');
-  setSuccess('Login Accepted!');
+  setSuccess('Admin Created Succesfully!');
     } catch (err) {
         console.log(err);
+        setError('There was a problem creating the admin');
     }
 }
   
@@ -38,6 +52,13 @@ export default function login() {
       <div className="container">
         <h2>Create Admin</h2>
         <form onSubmit={handleSubmit} method="POST">
+        <label htmlFor="username or email">Username/Email</label>
+            <input
+                    type="username"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
             <label htmlFor="employee Name">Employee ID:</label>
             <input
                     type="employeeId"
@@ -52,13 +73,6 @@ export default function login() {
                     placeholder="Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                />
-            <label htmlFor="password">Password</label>
-            <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                 />
             <button type="submit">Create Admin</button>
         </form>

@@ -20,11 +20,12 @@ export default function login() {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify({username, password}),
+      body: JSON.stringify({email: username, providedPassword: password}),
     });
 
   const data = await response.json();
   const dataResponse = await data.response;
+  console.log('Data response ' + dataResponse)
   if (dataResponse == true) {
 
     const userDataResponse = await fetch('./api/returnUser', {
@@ -37,40 +38,37 @@ export default function login() {
 
   const data2 = await userDataResponse.json();
   const user = await data2.response;
+  console.log('User: ' + user);
 
   setError('');
   setSuccess('Login Accepted!');
 
-    if (user) {
+  const adminDataResponse = await fetch('./api/returnAdmin', {
+    method: 'POST',
+    body: JSON.stringify({
+      accountId: user.id,
+    }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const adminData = await adminDataResponse.json();
+  const admin = await adminData.response;
+
+  if (admin == true) {
+    console.log('admin login success')
+    router.push('/admin');
+  } else if (user) {
       signIn('email', {
         email: username,
         callbackUrl: 'http://localhost:3000'
       });
-    }
-
   } else {
+    setSuccess('');      
+    setError('Login Failure: Incorrect Username or Password');
+  
+    return null;
+  }
 
-    const adminDataResponse = await fetch('./api/returnAdmin', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    const adminData = await adminDataResponse.json();
-    const admin = await adminData.response;
-
-    if (admin) {
-      console.log('admin login success')
-      router.push('/admin');
-    } else {
-      setSuccess('');
-      setError('Login Failure: Incorrect Username or Password');
-
-      return null;
-    }
   }
 }
   
@@ -83,7 +81,7 @@ export default function login() {
       <div className="container">
         <h2>Login</h2>
         <form onSubmit={handleSubmit} method="POST">
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="email">Username or Email:</label>
             <input
                     type="text"
                     placeholder="Username"

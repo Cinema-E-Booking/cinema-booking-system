@@ -64,6 +64,7 @@ export async function compareCustomerLogin(email: any, providedPassword: any) {
   const values = [email];
   const res = await query(queryText, values);
   if (res.rowCount === 0) {
+    console.log('no data found');
     return false;
   }
 
@@ -104,29 +105,26 @@ export async function editCustomer(accountId: number, opts: EditCustomerOpts) {
   await query(queryText, values);
 }
 
-export type CreateAdminOpts = Omit<Admin & {password: string}, "accountId">;
-export async function createAdmin(opts: CreateAdminOpts) {
+// Modified 11/16/2024 to instead of creating a new user with account status, modify an existing user to be an admin.
+//export type CreateAdminOpts = Omit<Admin & {password: string}, "accountId">;
+export async function createAdmin(account_id: string, employee_id: string, title: string) {
   const queryText = `
-  WITH new_id AS (
-    INSERT INTO account (password_hash)
-    VALUES ($2)
-    RETURNING id
-  )
   INSERT INTO admin (account_id, employee_id, title)
-  VALUES ((SELECT id FROM new_id), $1, $3)
+  VALUES ($1, $2, $3)
   RETURNING account_id;
   `;
 
 
-  const salt = await bcrypt.genSalt();
-  const passwordHash = await bcrypt.hash(opts.password, salt);
+  /*const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(opts.password, salt); */
 
-  const values = [opts.employeeId, passwordHash, opts.title];
+  const values = [account_id, employee_id, title];
   const res = await query(queryText, values);
 
   return res.rows[0].account_id as number;
 }
 
+// Non-functional currently, instead check if user is admin.
 export async function compareAdminLogin(employeeId: string, providedPassword: string) {
   const queryText = `
   SELECT password_hash

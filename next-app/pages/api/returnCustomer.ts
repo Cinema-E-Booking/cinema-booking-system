@@ -6,10 +6,10 @@ export default async function handler(
     res: NextApiResponse<{}>,
   ) {
 
-    const {email, password} = req.body;
+    const {email, providedPassword} = req.body;
 
     try {
-        const response = await compareCustomerLogin(email, password);
+        const response = await compareCustomerLogin(email, providedPassword);
         return res.status(201).json({ response });
         } catch (error) {
             console.error('Error returning customer', error);

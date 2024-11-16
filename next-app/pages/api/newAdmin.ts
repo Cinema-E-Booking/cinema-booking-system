@@ -1,20 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateAdminOpts, createAdmin } from "@/lib/account";
+import { /*CreateAdminOpts,*/ createAdmin } from "@/lib/account";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<{}>,
   ) {
     
-    const { employeeId, title, password } = req.body;
-    const opts: CreateAdminOpts = {
-        employeeId,
-        title,
-        password,
-    }
+    const { accountId, employeeId, title } = req.body;
 
     try {
-        const response = await createAdmin(opts);
+        const response = await createAdmin(accountId, employeeId, title);
 
         return res.status(200).json({ response });
     } catch (error) {
