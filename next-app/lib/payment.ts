@@ -77,7 +77,7 @@ export async function getAllPaymentMethods(accountId: number) {
 export async function getPaymentMethod(cardId: number) {
   const queryText = `
   SELECT
-    id, card_owner_id, card_number_last_four, expiration_name, billing_address
+    id, card_owner_id, card_number_last_four, expiration_name
   FROM payment_method
   WHERE id = $1;
   `;
@@ -90,7 +90,6 @@ export async function getPaymentMethod(cardId: number) {
     cardOwnerId: res.rows[0].card_owner_id,
     cardNumberLastFour: res.rows[0].card_number_last_four,
     expirationDate: res.rows[0].expiration_date,
-    billingAddress: res.rows[0].billing_address,
   };
 }
 
