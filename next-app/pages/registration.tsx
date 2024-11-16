@@ -40,17 +40,23 @@ const CreateCustomer = () => {
                 },
                 body: JSON.stringify(customerData),
             });
-            signIn("email", { email: email, callbackUrl: 'http://localhost:3000' });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message);
             }
 
-            setSuccess('Customer created successfully!');
         } catch (err) {
-            setError(String(err));
+            setError("Could Not Create Customer");
+            console.log(err);
         }
+
+        try {
+            signIn("email", { email: email, callbackUrl: 'http://localhost:3000' });
+        } catch (err) {
+            console.log(err);
+        }
+        setSuccess('Customer created successfully!');
     };
 
     //Might need later for edit profile confirmation

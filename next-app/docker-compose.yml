@@ -28,10 +28,6 @@ services:
       - PGDATABASE=postgres
       - PGHOST=cinema_database
       - PGPORT=5432
-      - EMAIL_SERVER_HOST=smtp.example.com
-      - EMAIL_SERVER_PORT=587
-      - EMAIL_SERVER_USER=your-email@example.com
-      - EMAIL_SERVER_PASSWORD=your-email-password
     networks:
       - backend-network
     ports:

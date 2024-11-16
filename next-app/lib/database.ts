@@ -208,6 +208,6 @@ CREATE TABLE IF NOT EXISTS ticket (
 );
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
-CREATE INDEX IF NOT EXISTS idx_movie_title ON move USING gist(title gist_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_movie_title ON movie USING gist(title gist_trgm_ops);
 `;
 query(schema).catch(err => console.error(err))
