@@ -87,7 +87,7 @@ export default function changePassword() {
           Enter a new password and we will update it for you.
         </p>
         <form onSubmit={handleSubmit} method="POST">
-            <label htmlFor="email">New Password:</label>
+            <label htmlFor="email">Old Password:</label>
             <input
                     type="password"
                     placeholder="Old Password"
@@ -95,6 +95,7 @@ export default function changePassword() {
                     onChange={(e) => setOldPassword(e.target.value)}
                     required
                 />
+            <label htmlFor="email">New Password:</label>
             <input
                     type="password"
                     placeholder="New Password"

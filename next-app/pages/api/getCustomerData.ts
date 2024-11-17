@@ -10,7 +10,6 @@ export default async function handler(
 
     try {
         const response = await getCustomerData(id);
-        console.log({response});
 
         return res.status(200).json({ response });
     } catch (error) {

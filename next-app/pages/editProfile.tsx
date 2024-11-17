@@ -1,8 +1,8 @@
 import Head from "next/head";
-import { FormEvent, useState }  from "react";
+import { FormEvent, useState, useEffect }  from "react";
 import { useSession } from "next-auth/react";
 
-const CreateCustomer = () => {
+const editProfile = () => {
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -11,7 +11,49 @@ const CreateCustomer = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const {data: session} = useSession();
+    const {data: session, status} = useSession();
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            try {
+                updateData(session?.user?.email);
+            } catch (err) {
+                console.log(err)
+                setError('Something went wrong');
+            }
+        }
+    }, [status, session])
+
+    const updateData = async (email: any) => {
+        const response = await fetch('./api/returnUser', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email: session?.user?.email}),
+        });
+        const userData = await response.json();
+        const userId = await userData.response;
+        const id = userId.id;
+
+        const customerResponse = await fetch('./api/getCustomerData', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({id: id}),
+        });
+        const responseData = await customerResponse.json();
+        const customerData = await responseData.response;
+        const data = customerData;
+
+        setFirstName(data.first_name);
+        setLastName(data.last_name);
+        setBillingAddress(data.billing_address);
+        setWantsPromotions(data.wants_promotions);
+    }
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -29,7 +71,7 @@ const CreateCustomer = () => {
             const userId = await userData.response;
             const id = userId.id;
 
-            const response2 = await fetch('./api/changeCustomerData', {
+            await fetch('./api/changeCustomerData', {
                 method: 'POST',
                 body: JSON.stringify({
                     accountId: Number(id),
@@ -100,4 +142,4 @@ const CreateCustomer = () => {
     );
 };
 
-export default CreateCustomer;
+export default editProfile;
