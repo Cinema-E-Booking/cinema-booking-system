@@ -1,4 +1,5 @@
 import Head from "next/head"
+import { NumberLiteralType } from "typescript";
 
 export default function demo() {
 
@@ -10,7 +11,7 @@ export default function demo() {
         trailer_url: string,
         image_url: string,
         duration: string,
-    }
+    };
     
     const movie1: Movie = {
         title: "Inception",
@@ -53,11 +54,76 @@ export default function demo() {
         })
     }
 
+    interface Seat {
+        id: number;
+        row: number;
+        number: number;
+    }
+
+    interface Showroom {
+        name: string,
+        seats: {
+            row: number;
+            number: number;
+        }[]
+    };
+
+    const showRoom1: Showroom = {
+        name: 'Auditorium 1',
+        seats: [
+            {row: 1, number: 6},
+            {row: 2, number: 6},
+            {row: 3, number: 6},
+            {row: 4, number: 6},
+            {row: 5, number: 6},
+            {row: 6, number: 6},
+        ]       
+    }
+
+    const showRoom2: Showroom = {
+        name: 'Auditorium 2',
+        seats: [
+            {row: 1, number: 6},
+            {row: 2, number: 6},
+            {row: 3, number: 6},
+            {row: 4, number: 6},
+            {row: 5, number: 6},
+            {row: 6, number: 6},
+        ]       
+    }
+
+    const showRoom3: Showroom = {
+        name: 'Auditorium 3',
+        seats: [
+            {row: 1, number: 6},
+            {row: 2, number: 6},
+            {row: 3, number: 6},
+            {row: 4, number: 6},
+            {row: 5, number: 6},
+            {row: 6, number: 6},
+        ]       
+    }
+
+    const createShowRoom = async (showroomData: Showroom) => {
+        const response = await fetch('./api/newShowroom', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(showroomData),
+        })
+    }
+
     const createData = async () => {
 
         createMovie(movie1);
         createMovie(movie2);
         createMovie(movie3);
+
+        createShowRoom(showRoom1);
+        createShowRoom(showRoom2);
+        createShowRoom(showRoom3);
 
         return null;
     }
