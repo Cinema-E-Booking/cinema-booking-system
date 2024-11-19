@@ -6,7 +6,7 @@ export default async function handler(
     res: NextApiResponse<{}>,
   ) {
 
-    const {title, category, rating, synopsis, trailer_url, image_url, duration} = req.body;
+    const {title, category, rating, synopsis, trailer_url, image_url, duration, director, producer, actors} = req.body;
     const opts: CreateMovieOpts = {
         title,
         category,
@@ -14,7 +14,10 @@ export default async function handler(
         synopsis,
         trailer_url,
         image_url,
-        duration
+        duration,
+        director,
+        producer,
+        actors,
     }
 
     try {

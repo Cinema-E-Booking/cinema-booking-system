@@ -10,6 +10,9 @@ type Movie = {
     trailer_url: string,
     image_url: string,
     duration: string,
+    director: string,
+    producer: string,
+    actors: string[],
 }
 
 const CreateMovie = () => {
@@ -20,51 +23,42 @@ const CreateMovie = () => {
     const [trailer_url, setTrailer] = useState('');
     const [image_url, setImage] = useState('');
     const [duration, setDuration] = useState('');
+    const [director, setDirector] = useState('');
+    const [producer, setProducer] = useState('');
+    const [actors, setActors] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [movies, setMovies] = useState<Movie[]>([]);
-
-    interface Movie {
-        movieId: number;
-        title: string;
-        category: string;
-        rating: string;
-        synopsis: string;
-        trailer_url: string;
-        image_url: string;
-        duration: string;
-    }
+    const [movies, setMovies] = useState([]);
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const response = await fetch('./api/allMovies', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                    }),
-                    headers: { 'Content-Type': 'application/json' },
-                  });
-                const moviesData = await response.json();
-                console.log('MoviesData: ', moviesData)
-        
-                const moviesArray = moviesData.data as Movie[];
-                setMovies(moviesArray); // Set the fetched movies data
-                setSuccess("Movies loaded");
-                console.log('movies: ', moviesArray);
+                const response = await fetch("/api/allMovies");
+                const result = await response.json();
+                //console.log('manage check:', result.data);
+                //console.log('manage check 2:', result.data.movies[0]);
+                //console.log('manage check 3:', result.data.movies[0][1]);
+                
+                // Assuming the response structure is `{ data: Array(3) }`
+                if (result.data && Array.isArray(result.data.movies)) {
+                    setMovies(result.data.movies); // Set the fetched movies data
+                    setSuccess("Movies loaded");
+                } else {
+                    setError("Failed to load movies.");
+                }
             } catch (error) {
-                console.log(error)
                 setError("An error occurred while fetching movies.");
             }
-        }
+        };
 
         fetchMovies();
-    }, [movies]);
+    }, []);
 
     //useEffect(() => {
     //    console.log('manage check 4:', movies);
     //}, [movies]);
 
-    /*const deleteMovie = async (id: number) => {
+    const deleteMovie = async (id: number) => {
         console.log('client side check:',id);
         try{
             const response = await fetch(`./api/deleteMovie?id=${id}`, {
@@ -81,7 +75,7 @@ const CreateMovie = () => {
         } catch (error) {
             setError("Error happened while deleting movie");
         }
-    }; */
+    };
 
 
 
@@ -103,6 +97,9 @@ const CreateMovie = () => {
             trailer_url,
             image_url,
             duration,
+            director,
+            producer,
+            actors,
         };
 
         try {
@@ -159,6 +156,12 @@ const CreateMovie = () => {
             </select>
             <label htmlFor="duration">Duration:</label>
             <input type="text" placeholder="Duration" value={duration} onChange={(e) => setDuration(e.target.value)} required />
+            <label htmlFor="duration">Director:</label>
+            <input type="text" placeholder="Director" value={director} onChange={(e) => setDirector(e.target.value)} required />
+            <label htmlFor="duration">Producer:</label>
+            <input type="text" placeholder="Producer" value={producer} onChange={(e) => setProducer(e.target.value)} required />
+            <label htmlFor="duration">Cast:</label>
+            <input type="text" placeholder="Actors" value={actors} onChange={(e) => setActors(e.target.value)} required />
             <label htmlFor="synopsis">Synopsis:</label>
             <textarea id="Synopsis" defaultValue={""} value={synopsis} onChange={(e) => setSynopsis(e.target.value)} required />
             <label htmlFor="trailer-link">Trailer Link (YouTube):</label>
@@ -177,21 +180,18 @@ const CreateMovie = () => {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <div>
-            <h1>Available Movies</h1>
-            {movies.length === 0 ? (
-            <p>No movies available.</p>
-            ) : (
-                <ul>
-                    {movies.map(movie => (
-                        <li key={movie.movieId}>
-                            <p>Title: {movie.title}</p>
-                            <p>Movie Id: {movie.movieId}</p>
-                        </li>
+                <tbody>
+                    {movies.map((movie, index) => (
+                        <tr key={index}>
+                            <td>{movie[1]}</td>
+                            <td>{movie[4]}</td>
+                            <td>{movie[2]}</td>
+                            <td>
+                                <button onClick={() => deleteMovie(movie[0])}>Delete</button>
+                            </td>
+                        </tr>
                     ))}
-                </ul>
-            )}
-        </div>
+                </tbody>
             </table>
         </main>
         {error && <p style={{ color: 'red' }}>{error}</p>}

@@ -11,6 +11,9 @@ export default function demo() {
         trailer_url: string,
         image_url: string,
         duration: string,
+        director: string,
+        producer: string,
+        actors: string[],
     };
     
     const movie1: Movie = {
@@ -21,6 +24,9 @@ export default function demo() {
         trailer_url: "YoHD9XEInc0?si=wtXEOBUGkgK1CDyo",
         image_url: "https://upload.wikimedia.org/wikipedia/en/1/18/Inception_OST.jpg",
         duration: "148 minutes",
+        director: "Christopher Nolan",
+        producer: "Christopher Nolan / Emma Thomas",
+        actors: ["Many famous actors", "More famous actors"]
     };
     
     const movie2: Movie = {
@@ -31,6 +37,9 @@ export default function demo() {
         trailer_url: "PLl99DlL6b4?si=BS73pGTUpjwb-Glw",
         image_url: "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg",
         duration: "142 minutes",
+        director: "Frank Darabont",
+        producer: "Frank Darabont",
+        actors: ["Many famous actors", "Other actors"]
     };
     
     const movie3: Movie = {
@@ -41,6 +50,9 @@ export default function demo() {
         trailer_url: "EXeTwQWrcwY?si=yWiAYf1VsfMwpypL",
         image_url: "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg",
         duration: "152 minutes",
+        director: "Christopher Nolan",
+        producer: "Christopher Nolan / Emma Thomas / Charles Roven",
+        actors: ["Christian Bale", "Cool Guy #2"]
     };
 
     const createMovie = async (movieData: Movie) => {

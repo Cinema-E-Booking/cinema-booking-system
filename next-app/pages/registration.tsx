@@ -56,7 +56,6 @@ const CreateCustomer = () => {
         } catch (err) {
             console.log(err);
         }
-        setSuccess('Customer created successfully!');
     };
 
     //Might need later for edit profile confirmation

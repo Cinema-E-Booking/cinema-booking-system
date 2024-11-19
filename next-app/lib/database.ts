@@ -217,7 +217,7 @@ ALTER TABLE movie
 
 CREATE TABLE IF NOT EXISTS review (
   id SERIAL PRIMARY KEY,
-  customer_id INT NOT NULL REFERENCES customer(id),
+  customer_id INT NOT NULL REFERENCES customer(account_id),
   movie_id INT NOT NULL REFERENCES movie(id),
   stars INT NOT NULL CHECK (1 <= stars AND stars <= 5),
   content TEXT NOT NULL

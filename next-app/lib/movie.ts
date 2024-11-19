@@ -13,7 +13,7 @@ export interface Movie {
   duration: string;
   director: string;
   producer: string;
-  cast: string[];
+  actors: string[];
 }
 
 export type CreateMovieOpts = Omit<Movie, "movieId">;
@@ -30,7 +30,7 @@ export async function createMovie(opts: CreateMovieOpts): Promise<number> {
     duration,
     director,
     producer,
-    cast
+    actors
   )
   VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
   RETURNING id;
@@ -46,7 +46,7 @@ export async function createMovie(opts: CreateMovieOpts): Promise<number> {
     opts.duration,
     opts.director,
     opts.producer,
-    opts.cast,
+    opts.actors,
   ];
   const res = await query(queryText, values);
 
@@ -66,7 +66,7 @@ export async function getMovie(movieId: number): Promise<Movie> {
       duration,
       director,
       producer,
-      cast
+      actors
     FROM movie
     WHERE id = $1;
   `;
@@ -85,7 +85,7 @@ export async function getMovie(movieId: number): Promise<Movie> {
     duration: res.rows[0].duration,
     director: res.rows[0].director,
     producer: res.rows[0].producer,
-    cast: res.rows[0].cast,
+    actors: res.rows[0].actors,
   };
 };
 
@@ -102,7 +102,7 @@ export async function searchMovies(title: string): Promise<Movie> {
       duration,
       director,
       producer,
-      cast
+      actors
     FROM movie
     WHERE title = $1;
   `;
@@ -121,7 +121,7 @@ export async function searchMovies(title: string): Promise<Movie> {
     duration: res.rows[0].duration,
     director: res.rows[0].director,
     producer: res.rows[0].producer,
-    cast: res.rows[0].cast,
+    actors: res.rows[0].actors,
   };
 };
 
@@ -150,9 +150,9 @@ export async function searchRating(rating: string) {
   return data;
 };
 
-export async function getAllMovies() {
+export async function getAllMoviesData() {
     const queryText = `
-    SELECT id, title, category, rating, synopsis, trailer_url, image_url, duration
+    SELECT id, title, category, rating, synopsis, trailer_url, image_url, duration, director, producer, actors
     FROM movie
     `;
 
@@ -177,14 +177,34 @@ export async function getAllMovies() {
         duration: row.duration,
         director: row.director,
         producer: row.producer,
-        cast: row.cast,
+        actors: row.actors,
     });
   }
   
     return data;
 }
 
+export async function getAllMovies() {
+  const queryText = `
+  SELECT * FROM movie
+  `;
 
+  const res = await query(queryText);
+  console.log('Databse response:', res);
+  console.log('row Count:', res.rowCount);  
+
+  if(res.rowCount == 0) {
+      return null; // no movies found
+  }
+
+  const data = {
+    rowCount: res.rowCount,
+    movies: res.rows.map((row) => Object.values(row)),
+  };
+  console.log(data.movies);
+
+  return data;
+}
 
 export async function getNowShowing() {
     const queryText = `
@@ -223,7 +243,7 @@ export async function getMovies(opts: Partial<GetMoviesOpts>) {
     m.duration,
     m.director,
     m.producer,
-    m.cast
+    m.actors
   FROM movie
   WHERE
     (($2 IS NULL) OR ($2 % m.title)) AND
@@ -260,7 +280,7 @@ export async function getMovies(opts: Partial<GetMoviesOpts>) {
       duration: row.duration,
       director: row.director,
       producer: row.producer,
-      cast: row.cast,
+      actors: row.actors,
     });
   }
 
