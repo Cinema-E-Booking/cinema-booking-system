@@ -196,8 +196,21 @@ export async function getMovieScreenings(movieId: number, futureOnly: boolean) {
 }
 
 // Returns true if the created screening would conflict with an existing
-// sreening.
+// screening.
 export async function screeningWouldConflict(opts: CreateScreeningOpts) {
-  // TODO
-  return false;
+  const queryText = `
+  SELECT COUNT(1) as conflicts
+  FROM screening AS s
+  LEFT JOIN movie AS m
+  ON m.id = s.movie_id
+  WHERE
+    (s.auditorium_id = $1) AND
+    ($2 < s.start_time + m.duration) AND
+    ($2 + (SELECT duration FROM movie WHERE id = $3) > s.start_time);
+  `;
+
+  const values = [opts.auditoriumId, opts.startTime, opts.movieId];
+  const res = await query(queryText, values);
+
+  return res.rows[0].conflicts !== 0;
 };

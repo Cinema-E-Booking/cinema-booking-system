@@ -209,5 +209,18 @@ CREATE TABLE IF NOT EXISTS ticket (
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE INDEX IF NOT EXISTS idx_movie_title ON movie USING gist(title gist_trgm_ops);
+
+ALTER TABLE movie
+  ADD COLUMN IF NOT EXISTS director TEXT NOT NULL DEFAULT 'Unknown Director',
+  ADD COLUMN IF NOT EXISTS producer TEXT NOT NULL DEFAULT 'Unknown Producer',
+  ADD COLUMN IF NOT EXISTS actors TEXT[] NOT NULL DEFAULT '{}';
+
+CREATE TABLE IF NOT EXISTS review (
+  id SERIAL PRIMARY KEY,
+  customer_id INT NOT NULL REFERENCES customer(id),
+  movie_id INT NOT NULL REFERENCES movie(id),
+  stars INT NOT NULL CHECK (1 <= stars AND stars <= 5),
+  content TEXT NOT NULL
+);
 `;
 query(schema).catch(err => console.error(err))
