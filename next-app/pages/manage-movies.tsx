@@ -22,37 +22,49 @@ const CreateMovie = () => {
     const [duration, setDuration] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [movies, setMovies] = useState([]);
+    const [movies, setMovies] = useState<Movie[]>([]);
+
+    interface Movie {
+        movieId: number;
+        title: string;
+        category: string;
+        rating: string;
+        synopsis: string;
+        trailer_url: string;
+        image_url: string;
+        duration: string;
+    }
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const response = await fetch("/api/allMovies");
-                const result = await response.json();
-                //console.log('manage check:', result.data);
-                //console.log('manage check 2:', result.data.movies[0]);
-                //console.log('manage check 3:', result.data.movies[0][1]);
-                
-                // Assuming the response structure is `{ data: Array(3) }`
-                if (result.data && Array.isArray(result.data.movies)) {
-                    setMovies(result.data.movies); // Set the fetched movies data
-                    setSuccess("Movies loaded");
-                } else {
-                    setError("Failed to load movies.");
-                }
+                const response = await fetch('./api/allMovies', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                  });
+                const moviesData = await response.json();
+                console.log('MoviesData: ', moviesData)
+        
+                const moviesArray = moviesData.data as Movie[];
+                setMovies(moviesArray); // Set the fetched movies data
+                setSuccess("Movies loaded");
+                console.log('movies: ', moviesArray);
             } catch (error) {
+                console.log(error)
                 setError("An error occurred while fetching movies.");
             }
-        };
+        }
 
         fetchMovies();
-    }, []);
+    }, [movies]);
 
     //useEffect(() => {
     //    console.log('manage check 4:', movies);
     //}, [movies]);
 
-    const deleteMovie = async (id: number) => {
+    /*const deleteMovie = async (id: number) => {
         console.log('client side check:',id);
         try{
             const response = await fetch(`./api/deleteMovie?id=${id}`, {
@@ -69,7 +81,7 @@ const CreateMovie = () => {
         } catch (error) {
             setError("Error happened while deleting movie");
         }
-    };
+    }; */
 
 
 
@@ -165,18 +177,21 @@ const CreateMovie = () => {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {movies.map((movie, index) => (
-                        <tr key={index}>
-                            <td>{movie[1]}</td>
-                            <td>{movie[4]}</td>
-                            <td>{movie[2]}</td>
-                            <td>
-                                <button onClick={() => deleteMovie(movie[0])}>Delete</button>
-                            </td>
-                        </tr>
+                <div>
+            <h1>Available Movies</h1>
+            {movies.length === 0 ? (
+            <p>No movies available.</p>
+            ) : (
+                <ul>
+                    {movies.map(movie => (
+                        <li key={movie.movieId}>
+                            <p>Title: {movie.title}</p>
+                            <p>Movie Id: {movie.movieId}</p>
+                        </li>
                     ))}
-                </tbody>
+                </ul>
+            )}
+        </div>
             </table>
         </main>
         {error && <p style={{ color: 'red' }}>{error}</p>}

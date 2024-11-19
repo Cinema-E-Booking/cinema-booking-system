@@ -152,7 +152,8 @@ export async function searchRating(rating: string) {
 
 export async function getAllMovies() {
     const queryText = `
-    SELECT * FROM movie
+    SELECT id, title, category, rating, synopsis, trailer_url, image_url, duration
+    FROM movie
     `;
 
     const res = await query(queryText);
@@ -163,12 +164,23 @@ export async function getAllMovies() {
         return null; // no movies found
     }
 
-    const data = {
-      rowCount: res.rowCount,
-      movies: res.rows.map((row) => Object.values(row)),
-    };
-    //console.log(data.movies);
-
+    const data: Movie[] = [];
+    for (const row of res.rows) {
+      data.push({
+        movieId: row.id,
+        title: row.title,
+        category: row.category,
+        rating: row.rating,
+        synopsis: row.synopsis,
+        trailer_url: row.trailer_url,
+        image_url: row.image_url,
+        duration: row.duration,
+        director: row.director,
+        producer: row.producer,
+        cast: row.cast,
+    });
+  }
+  
     return data;
 }
 

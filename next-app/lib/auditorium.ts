@@ -100,6 +100,21 @@ export async function getAuditorium(auditoriumId: number): Promise<Auditorium> {
   };
 }
 
+export async function getAllAuditoriums() {
+  const queryText = `
+  SELECT id
+  FROM auditorium
+  `;
+
+  const res = await query(queryText);
+
+  if(res.rowCount == 0) {
+      return null; // no auditoriums
+  }
+
+  return res.rows as number[];
+}
+
 export interface CreateScreeningOpts {
   movieId: number;
   auditoriumId: number;
