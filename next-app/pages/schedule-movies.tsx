@@ -50,19 +50,19 @@ export default function ScheduleMovies() {
 
     const fetchMovies = async () => {
         try {
-            const response = await fetch('./api/allMovies', {
+            const response = await fetch('./api/allMoviesData', {
                 method: 'POST',
                 body: JSON.stringify({
                 }),
                 headers: { 'Content-Type': 'application/json' },
               });
             const moviesData = await response.json();
-            console.log('MoviesData: ', moviesData)
+            //console.log('MoviesData: ', moviesData)
     
             const moviesArray = moviesData.data as Movie[];
             setMovies(moviesArray); // Set the fetched movies data
             setSuccess("Movies loaded");
-            console.log('movies: ', moviesArray);
+            //console.log('movies: ', moviesArray);
         } catch (error) {
             console.log(error)
             setError("An error occurred while fetching movies.");
@@ -89,8 +89,8 @@ export default function ScheduleMovies() {
                     name: room.name,
                     seats: room.seats,
                 });
-                console.log('room', room);
-                console.log('Showrooms: ', showrooms)
+                //console.log('room', room);
+                //console.log('Showrooms: ', showrooms)
             }
 
             setShowrooms(showroomsTemp);
@@ -112,7 +112,7 @@ export default function ScheduleMovies() {
           const auditoriumData = await auditResponse.json();
           const auditorium = auditoriumData.data;
 
-          console.log('auditorium: ', auditorium)
+          //console.log('auditorium: ', auditorium)
 
           return auditorium;
     }
@@ -124,11 +124,42 @@ export default function ScheduleMovies() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({movieId, showroomId, startTime}),
+            body: JSON.stringify({movieId: movieId, auditoriumId: showroomId, startTime: startTime}),
         })
-
-        return null;
     }
+
+    /*const createShowing = async (e: FormEvent<HTMLFormElement>) => {
+        try {
+        const primaryResponse = await fetch('./api/checkScreening', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({movieId: movieId, auditoriumId: showroomId, startTime: startTime}),
+        })
+        const data = await primaryResponse.json();
+        const dataResponse = await data.response();
+        console.log('Data ', data)
+        console.log('Data Reponse ', data.response);
+
+        if (data.response == true) {
+        const response = await fetch('./api/newShowing', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({movieId: movieId, auditoriumId: showroomId, startTime: startTime}),
+        })
+    } else {
+        setError('Invalid')
+    }
+    } catch (error) {
+        console.log(error)
+        setError('Something went wrong');
+    }
+    } */
 
     const fetchShowings = async () => {
         
@@ -211,7 +242,7 @@ export default function ScheduleMovies() {
                     
                 />
                 <input
-                    type="date"
+                    type="datetime-local"
                     placeholder="Start Time"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}

@@ -9,7 +9,7 @@ export default async function handler(
     const { movieId } = req.body;
 
     try {
-        const response = await getMovieScreenings(movieId, false);
+        const response = await getMovieScreenings(movieId);
 
         return res.status(200).json({ response });
     } catch (error) {

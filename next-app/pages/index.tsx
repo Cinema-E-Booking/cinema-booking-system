@@ -25,9 +25,9 @@ const Home = () => {
         try {
             const response = await fetch("/api/allMovies");
             const result = await response.json();
-            console.log('index check:', result.data);
-            console.log('index check 2:', result.data.movies[0]);
-            console.log('index check 3:', result.data.movies[0][2]);
+            //console.log('index check:', result.data);
+            //console.log('index check 2:', result.data.movies[0]);
+            //console.log('index check 3:', result.data.movies[0][2]);
             
             // Assuming the response structure is `{ data: Array(3) }`
             if (result.data && Array.isArray(result.data.movies)) {
@@ -46,16 +46,16 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Movies check:', movies);
-    console.log('Movies check 2:', movies[0]);
+    //console.log('Movies check:', movies);
+    //console.log('Movies check 2:', movies[0]);
     const divideMovies = async () => {
       try {
         for (let i = 0; movies[i] !== undefined; i++) {
           if (movies[i][2] === 'Now Showing') {
-            console.log('Now showing check:', movies[i][1]);
+            //console.log('Now showing check:', movies[i][1]);
             setNSMovies(prevNSMovies => [...prevNSMovies, movies[i]]);
           } else if (movies[i][2] === 'Coming Soon') {
-            console.log('Coming soon check:', movies[i][1]);
+            //console.log('Coming soon check:', movies[i][1]);
             setCSMovies(prevCSMovies => [...prevCSMovies, movies[i]]);
           } else {
             setError("Error when dividing movies");
@@ -88,7 +88,7 @@ const Home = () => {
     try {
         const response = await fetch(`/api/searchMovies?title=${search}`);
         const result = await response.json();
-        console.log('search check:', result.result);
+        //console.log('search check:', result.result);
         //console.log('index check 2:', result.data.movies[0]);
         //console.log('index check 3:', result.data.movies[0][2]);
         
@@ -96,7 +96,7 @@ const Home = () => {
         if (result.result !== undefined) {
             //setMovies(result.data.movies); // Set the fetched movies data
             //setRowCount(result.data.rowCount);
-            console.log('search check 2:', result.result.movieId);
+            //console.log('search check 2:', result.result.movieId);
             goToMoviePage(result.result.movieId);
             //setSuccess("Movies loaded");
             //setSearchStatus("No Such Movie");
@@ -112,8 +112,8 @@ const fetchRatedMovies = async () => {
   try {
       const response = await fetch(`/api/searchRatings?rating=${rating}`);
       const result = await response.json();
-      console.log('rating check:', result);
-      console.log('rating check 2:', result.result.movies);
+      //console.log('rating check:', result);
+      //console.log('rating check 2:', result.result.movies);
       //console.log('index check 2:', result.data.movies[0]);
       //console.log('index check 3:', result.data.movies[0][2]);
       

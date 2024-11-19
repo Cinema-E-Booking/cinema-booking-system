@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getAllMovies } from "@/lib/movie";
+import { getAllMoviesData } from "@/lib/movie";
 
 export default async function handler(
     req: NextApiRequest,
@@ -8,7 +8,7 @@ export default async function handler(
     
 
     try {
-        const data = await getAllMovies();
+        const data = await getAllMoviesData();
         //console.log(data);
         //console.log('allMovies Check:', data);
 

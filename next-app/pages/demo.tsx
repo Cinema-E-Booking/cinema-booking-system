@@ -26,7 +26,7 @@ export default function demo() {
         duration: "148 minutes",
         director: "Christopher Nolan",
         producer: "Christopher Nolan / Emma Thomas",
-        actors: ["Many famous actors", "More famous actors"]
+        actors: ["Many famous actors ", "More famous actors "]
     };
     
     const movie2: Movie = {
@@ -39,7 +39,7 @@ export default function demo() {
         duration: "142 minutes",
         director: "Frank Darabont",
         producer: "Frank Darabont",
-        actors: ["Many famous actors", "Other actors"]
+        actors: ["Many famous actors ", "Other actors "]
     };
     
     const movie3: Movie = {
@@ -52,7 +52,7 @@ export default function demo() {
         duration: "152 minutes",
         director: "Christopher Nolan",
         producer: "Christopher Nolan / Emma Thomas / Charles Roven",
-        actors: ["Christian Bale", "Cool Guy #2"]
+        actors: ["Christian Bale ", "Cool Guy #2 "]
     };
 
     const createMovie = async (movieData: Movie) => {

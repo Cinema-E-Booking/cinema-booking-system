@@ -190,8 +190,8 @@ export async function getAllMovies() {
   `;
 
   const res = await query(queryText);
-  console.log('Databse response:', res);
-  console.log('row Count:', res.rowCount);  
+  //console.log('Databse response:', res);
+  //console.log('row Count:', res.rowCount);  
 
   if(res.rowCount == 0) {
       return null; // no movies found
@@ -201,7 +201,7 @@ export async function getAllMovies() {
     rowCount: res.rowCount,
     movies: res.rows.map((row) => Object.values(row)),
   };
-  console.log(data.movies);
+  //console.log(data.movies);
 
   return data;
 }

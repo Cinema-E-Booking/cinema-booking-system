@@ -143,7 +143,7 @@ async function getAvailableSeats(screeningId: number, auditoriumId: number): Pro
     AND id NOT IN (
       SELECT seat_id
       FROM ticket
-      WHERE screening_id = $2;
+      WHERE screening_id = $2
     );
   `;
 
@@ -188,24 +188,23 @@ export async function getScreening(screeningId: number): Promise<Screening> {
 
 // Will return all screenings for a movie.
 // If futureOnly is true, it will only return upcoming screenings
-export async function getMovieScreenings(movieId: number, futureOnly: boolean) {
+export async function getMovieScreenings(movieId: number) {
   // Pretty inefficient code, but not enough movies for this to actually matter
   const queryText = `
-  SELECT
-    id
-  FROM screening
-  WHERE
-    movie_id = $1 AND
-    ($2 OR (start_time > NOW()));
-  `;
+  SELECT id FROM screening WHERE movie_id = $1;
+  `
+  ;
 
-  const values = [movieId, futureOnly];
+  const values = [movieId];
   const res = await query(queryText, values);
 
+  console.log('Res: ', res)
   const screenings: Screening[] = [];
   for (const row of res.rows) {
     screenings.push(await getScreening(row.id));
+    console.log('row: ', getScreening(row.id));
   }
+  console.log(screenings);
 
   return screenings;
 }

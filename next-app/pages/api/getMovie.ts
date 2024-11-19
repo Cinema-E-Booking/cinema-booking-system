@@ -14,8 +14,8 @@ export default async function handler(
         res.status(200).json({ result });
         return result;
     } catch (error) {
-        console.error('Error deleting movies:', error);
-        return res.status(500).json({message: 'Error deleting movies.'});
+        console.error('Error getting movie:', error);
+        return res.status(500).json({message: 'Error getting movie.'});
     }
 
 
