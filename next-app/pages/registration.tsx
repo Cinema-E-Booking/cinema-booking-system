@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useState } from 'react';
-import emailjs from "@emailjs/browser";
+import { signIn } from "next-auth/react";
 
 const CreateCustomer = () => {
     const [email, setEmail] = useState('');
@@ -8,6 +8,7 @@ const CreateCustomer = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [wantsPromotions, setWantsPromotions] = useState(false);
+    const [billingAddress, setBillingAddress] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -27,6 +28,7 @@ const CreateCustomer = () => {
             firstName,
             lastName,
             wantsPromotions,
+            billingAddress,
         };
 
         try {
@@ -44,14 +46,20 @@ const CreateCustomer = () => {
                 throw new Error(errorData.message);
             }
 
-            sendEmail();
-            setSuccess('Customer created successfully!');
         } catch (err) {
-            setError(String(err));
+            setError("Could Not Create Customer");
+            console.log(err);
+        }
+
+        try {
+            signIn("email", { email: email, callbackUrl: 'http://localhost:3000' });
+        } catch (err) {
+            console.log(err);
         }
     };
 
-    const sendEmail = () => {
+    //Might need later for edit profile confirmation
+    /*const sendEmail = () => {
         const templateParams = {
           user_email: email,
           to_name: firstName
@@ -71,7 +79,7 @@ const CreateCustomer = () => {
           console.log('FAILED...', err);
         },
       );
-      }
+    }*/
 
     return (
         <>
@@ -118,6 +126,13 @@ const CreateCustomer = () => {
                     />
                     Wants Promotions
                 </label>
+                <input
+                    type="text"
+                    placeholder="Billing Address"
+                    value={billingAddress}
+                    onChange={(e) => setBillingAddress(e.target.value)}
+                    required
+                />
                 <button type="submit">Register</button>
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}

@@ -9,18 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/pg-adapter": "^1.7.3",
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
     "next": "14.2.15",
-    "next-auth": "^4.24.8",
-    "pg": "^8.13.0",
+    "next-auth": "^4.24.10",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1",
     "react": "^18",
     "react-dom": "^18",
+    "resend": "^4.0.1-alpha.0",
     "typescript": "^5.6.3"
   },
   "devDependencies": {
     "@emailjs/browser": "^4.4.1",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.7.7",
+    "@types/nodemailer": "^6.4.16",
     "@types/pg": "^8.11.10",
     "@types/react": "^18.3.11"
   }

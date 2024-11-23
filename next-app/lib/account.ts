@@ -1,7 +1,7 @@
 import { query } from "./database";
 import bcrypt from "bcrypt";
 
-export type CustomerStatus = "inactive" | "active" | "suspended";
+export type CustomerStatus = "Active" | "Inactive" | "Suspended";
 
 export interface Customer {
   accountId: number;
@@ -10,6 +10,7 @@ export interface Customer {
   email: string;
   status: CustomerStatus;
   wantsPromotions: boolean;
+  billingAddress: string;
 }
 
 export interface Admin {
@@ -26,15 +27,15 @@ export async function createCustomer(opts: CreateCustomerOpts): Promise<number> 
     VALUES ($2)
     RETURNING id
   )
-  INSERT INTO customer (account_id, email, first_name, last_name, wants_promotions, state)
-  VALUES ((SELECT id FROM new_id), $1, $3, $4, $5, 'active')
+  INSERT INTO customer (account_id, email, first_name, last_name, wants_promotions, state, billing_address)
+  VALUES ((SELECT id FROM new_id), $1, $3, $4, $5, 'active', $6)
   RETURNING account_id;
   `;
 
   const salt = await bcrypt.genSalt();
   const passwordHash = await bcrypt.hash(opts.password, salt);
 
-  const values = [opts.email, passwordHash, opts.firstName, opts.lastName, opts.wantsPromotions];
+  const values = [opts.email, passwordHash, opts.firstName, opts.lastName, opts.wantsPromotions, opts.billingAddress];
   const res = await query(queryText, values);
 
   return res.rows[0].account_id as number;
@@ -51,7 +52,7 @@ export async function setCustomerStatus(accountId: number, status: CustomerStatu
   await query(queryText, values);
 }
 
-export async function compareCustomerLogin(email: string, providedPassword: string) {
+export async function compareCustomerLogin(email: any, providedPassword: any) {
   const queryText = `
   SELECT password_hash
   FROM account as a
@@ -63,6 +64,7 @@ export async function compareCustomerLogin(email: string, providedPassword: stri
   const values = [email];
   const res = await query(queryText, values);
   if (res.rowCount === 0) {
+    console.log('no data found');
     return false;
   }
 
@@ -71,7 +73,7 @@ export async function compareCustomerLogin(email: string, providedPassword: stri
   return bcrypt.compare(providedPassword, storedPasswordHash);
 }
 
-export async function getCustomerAccountId(email: string) {
+export async function getCustomerAccountId(email: string | undefined) {
   const queryText = `
   SELECT account_id
   FROM customer
@@ -94,37 +96,35 @@ export async function editCustomer(accountId: number, opts: EditCustomerOpts) {
   UPDATE customer SET
     first_name = COALESCE($2, first_name),
     last_name = COALESCE($3, last_name),
-    wants_promotions = COALESCE($4, wants_promotions)
+    wants_promotions = COALESCE($4, wants_promotions),
+    billing_address = COALESCE($5, billing_address)
   WHERE account_id = $1;
   `;
 
-  const values = [accountId, opts.firstName, opts.lastName, opts.wantsPromotions];
+  const values = [accountId, opts.firstName, opts.lastName, opts.wantsPromotions, opts.billingAddress];
   await query(queryText, values);
 }
 
-export type CreateAdminOpts = Omit<Admin & {password: string}, "accountId">;
-export async function createAdmin(opts: CreateAdminOpts) {
+// Modified 11/16/2024 to instead of creating a new user with account status, modify an existing user to be an admin.
+//export type CreateAdminOpts = Omit<Admin & {password: string}, "accountId">;
+export async function createAdmin(account_id: string, employee_id: string, title: string) {
   const queryText = `
-  WITH new_id AS (
-    INSERT INTO account (password_hash)
-    VALUES ($2)
-    RETURNING id
-  )
   INSERT INTO admin (account_id, employee_id, title)
-  VALUES ((SELECT id FROM new_id), $1, $3)
+  VALUES ($1, $2, $3)
   RETURNING account_id;
   `;
 
 
-  const salt = await bcrypt.genSalt();
-  const passwordHash = await bcrypt.hash(opts.password, salt);
+  /*const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(opts.password, salt); */
 
-  const values = [opts.employeeId, passwordHash, opts.title];
+  const values = [account_id, employee_id, title];
   const res = await query(queryText, values);
 
   return res.rows[0].account_id as number;
 }
 
+// Non-functional currently, instead check if user is admin.
 export async function compareAdminLogin(employeeId: string, providedPassword: string) {
   const queryText = `
   SELECT password_hash
@@ -148,7 +148,7 @@ export async function resetAccountPassword(accountId: string, newPassword: strin
   WHERE id = $1;
   `;
 
-  const salt = await bcrypt.genSalt();
+  const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash(newPassword, salt);
 
   const values = [accountId, passwordHash];
@@ -169,3 +169,47 @@ export async function getIsAdmin(accountId: number) {
 
   return res.rows[0].is_admin as boolean;
 };
+
+export async function getCustomerData(accountId: number) {
+  const queryText = `
+  SELECT 
+    c.account_id,
+    c.email,
+    c.first_name,
+    c.last_name,
+    c.state,
+    c.wants_promotions,
+    c.billing_address
+  FROM
+    customer c
+  JOIN
+    account a ON c.account_id = a.id
+  WHERE
+    c.account_id = $1;
+  `;
+
+  const values = [accountId];
+  const res = await query(queryText, values);
+
+  return res.rows[0];
+};
+
+export async function returnUser(email: string) {
+  const queryText = `
+  SELECT
+    *
+  FROM
+    users
+  WHERE
+  email = $1
+  `;
+
+  const values = [email];
+  const res = await query(queryText, values);
+
+  if (res.rows.length > 0) {
+    return res.rows[0];
+  } else {
+    return null;
+  }
+}

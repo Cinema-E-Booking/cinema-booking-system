@@ -29,9 +29,15 @@ const Navbar = () => {
   return (
     <nav>
       {session ? (
-        <button onClick={() => signOut()}>Logout</button>
+        <div>
+          <button onClick={() => signOut({callbackUrl: '/login'})}>Logout</button>
+          <a href="http://localhost:3000/editProfile">editProfile</a>
+          <a href="http://localhost:3000/">Home Page</a>
+        </div>
       ) : (
-        <a href="http://localhost:3000/login">Login</a>
+        <div>
+          <a href="http://localhost:3000/">Home Page</a>
+        </div>
       )}
     </nav>
   );

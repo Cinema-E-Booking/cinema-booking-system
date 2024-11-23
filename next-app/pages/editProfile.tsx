@@ -1,63 +1,97 @@
 import Head from "next/head";
-import { useState } from 'react';
-import emailjs from "@emailjs/browser";
+import { FormEvent, useState, useEffect }  from "react";
+import { useSession } from "next-auth/react";
 
-const CreateCustomer = () => {
-    const [password, setPassword] = useState('');
+const editProfile = () => {
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [wantsPromotions, setWantsPromotions] = useState(false);
+    const [billingAddress, setBillingAddress] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [address, setAddress] = useState('');
-    const [cardNumber, setCardNumber] = useState('');
-    const [cvc, setCVC] = useState('');
-    const [cardName, setCardName] = useState('');
-    const [expiration, setExpiration] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const {data: session, status} = useSession();
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            try {
+                updateData(session?.user?.email);
+            } catch (err) {
+                console.log(err)
+                setError('Something went wrong');
+            }
+        }
+    }, [status, session])
+
+    const updateData = async (email: any) => {
+        const response = await fetch('./api/returnUser', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email: session?.user?.email}),
+        });
+        const userData = await response.json();
+        const userId = await userData.response;
+        const id = userId.id;
+
+        const customerResponse = await fetch('./api/getCustomerData', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({id: id}),
+        });
+        const responseData = await customerResponse.json();
+        const customerData = await responseData.response;
+        const data = customerData;
+
+        setFirstName(data.first_name);
+        setLastName(data.last_name);
+        setBillingAddress(data.billing_address);
+        setWantsPromotions(data.wants_promotions);
+    }
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setError('');
-        setSuccess('');
-
-        if(!firstName || !lastName || !password) {
-            setError("All fields required");
-            return;
-          }
-
-        const customerData = {
-            password,
-            firstName,
-            lastName,
-            wantsPromotions,
-            address,
-            cardNumber,
-            cvc,
-            cardName,
-            expiration
-        };
-
         try {
-            const response = await fetch('./api/profileTest', {
+
+            const response = await fetch('./api/returnUser', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(customerData),
+                body: JSON.stringify({email: session?.user?.email}),
             });
+            const userData = await response.json();
+            const userId = await userData.response;
+            const id = userId.id;
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message);
-            }
+            await fetch('./api/changeCustomerData', {
+                method: 'POST',
+                body: JSON.stringify({
+                    accountId: Number(id),
+                    firstName,
+                    lastName,
+                    wantsPromotions,
+                    billingAddress,
+                }),
+                headers: { 'Content-Type': 'application/json' },
+              });
 
-            setSuccess('sucess');
+              setError('');
+              setSuccess('Data Saved Succesfully!');
+
         } catch (err) {
-            setError(String(err));
+            console.log(err)
+            setError('Something went wrong')
         }
-    };
-
+    }
+        
 // for saved payment cards just display the last 4 digits of the card number
     return (
         <>
@@ -66,35 +100,27 @@ const CreateCustomer = () => {
         <title>Edit Profile</title>
         </Head>
         <div className ="container">
-            <h2>Edit Profile</h2>
             <form onSubmit={handleSubmit}>
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
                 <input
                     type="text"
                     placeholder="First Name"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    required
+                    
                 />
                 <input
                     type="text"
                     placeholder="Last Name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    required
+                    
                 />
                 <input
                     type="text"
-                    placeholder="Address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    required
+                    placeholder="Billing Address"
+                    value={billingAddress}
+                    onChange={(e) => setBillingAddress(e.target.value)}
+                    
                 />
                 <label>
                     <input
@@ -104,34 +130,16 @@ const CreateCustomer = () => {
                     />
                     Wants Promotions
                 </label>
-                <label>
-                    <input type="text" placeholder="Card Number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
-                    <input type="text" placeholder="Name on Card" value={cardName} onChange={(e) => setCardName(e.target.value)} />
-                    <input type="text" placeholder="CVC" value={cvc} onChange={(e) => setCVC(e.target.value)} />
-                    <input type="text" placeholder="expiration" value={expiration} onChange={(e) => setExpiration(e.target.value)} />
-                    Payment Card 1
-                </label>
-                <label>
-                    <input type="text" placeholder="Card Number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
-                    <input type="text" placeholder="Name on Card" value={cardName} onChange={(e) => setCardName(e.target.value)} />
-                    <input type="text" placeholder="CVC" value={cvc} onChange={(e) => setCVC(e.target.value)} />
-                    <input type="text" placeholder="expiration" value={expiration} onChange={(e) => setExpiration(e.target.value)} />
-                    Payment Card 2
-                </label>
-                <label>
-                    <input type="text" placeholder="Card Number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
-                    <input type="text" placeholder="Name on Card" value={cardName} onChange={(e) => setCardName(e.target.value)} />
-                    <input type="text" placeholder="CVC" value={cvc} onChange={(e) => setCVC(e.target.value)} />
-                    <input type="text" placeholder="expiration" value={expiration} onChange={(e) => setExpiration(e.target.value)} />
-                    Payment Card 3
-                </label>
-                <button type="submit">Save Edits</button>
-            </form>
+                <button type="submit">Save Changes</button>
+                </form>
+        </div>
+        <p>
+            Need to Change your Password? <a href="/changePassword">Change Password Here</a>
+        </p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
-        </div>
         </>
     );
 };
 
-export default CreateCustomer;
+export default editProfile;

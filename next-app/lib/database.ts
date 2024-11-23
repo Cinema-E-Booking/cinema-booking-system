@@ -29,6 +29,54 @@ EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
 
+CREATE TABLE IF NOT EXISTS verification_token
+(
+  identifier TEXT NOT NULL,
+  expires TIMESTAMPTZ NOT NULL,
+  token TEXT NOT NULL,
+ 
+  PRIMARY KEY (identifier, token)
+);
+ 
+CREATE TABLE IF NOT EXISTS accounts
+(
+  id SERIAL,
+  "userId" INTEGER NOT NULL,
+  type VARCHAR(255) NOT NULL,
+  provider VARCHAR(255) NOT NULL,
+  "providerAccountId" VARCHAR(255) NOT NULL,
+  refresh_token TEXT,
+  access_token TEXT,
+  expires_at BIGINT,
+  id_token TEXT,
+  scope TEXT,
+  session_state TEXT,
+  token_type TEXT,
+ 
+  PRIMARY KEY (id)
+);
+ 
+CREATE TABLE IF NOT EXISTS sessions
+(
+  id SERIAL,
+  "userId" INTEGER NOT NULL,
+  expires TIMESTAMPTZ NOT NULL,
+  "sessionToken" VARCHAR(255) NOT NULL,
+ 
+  PRIMARY KEY (id)
+);
+ 
+CREATE TABLE IF NOT EXISTS users
+(
+  id SERIAL,
+  name VARCHAR(255),
+  email VARCHAR(255),
+  "emailVerified" TIMESTAMPTZ,
+  image TEXT,
+ 
+  PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS account (
   id SERIAL PRIMARY KEY,
   password_hash BYTEA NOT NULL
@@ -46,7 +94,8 @@ CREATE TABLE IF NOT EXISTS customer (
   last_name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   state customer_state NOT NULL,
-  wants_promotions BOOLEAN NOT NULL
+  wants_promotions BOOLEAN NOT NULL,
+  billing_address TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS payment_method (
@@ -54,7 +103,6 @@ CREATE TABLE IF NOT EXISTS payment_method (
   card_owner_id INT NOT NULL REFERENCES account(id),
   card_number BYTEA NOT NULL,
   card_number_last_four CHAR(4) NOT NULL,
-  billing_address TEXT NOT NULL,
   expiration_date DATE NOT NULL,
 
   UNIQUE (card_owner_id, card_number)
@@ -97,6 +145,9 @@ CREATE TABLE IF NOT EXISTS promotion (
   end_time TIMESTAMP NOT NULL
 );
 
+ALTER TABLE promotion
+ADD COLUMN IF NOT EXISTS editable BOOLEAN DEFAULT TRUE;
+
 CREATE TABLE IF NOT EXISTS booking (
   id SERIAL PRIMARY KEY,
   customer_id INT NOT NULL REFERENCES account(id),
@@ -117,6 +168,59 @@ CREATE TABLE IF NOT EXISTS booked_ticket (
   ticket_id INT NOT NULL REFERENCES ticket(id),
   
   PRIMARY KEY (booking_id, ticket_id)
+);
+
+-- Changing how tickets and seats are done
+
+DROP TABLE IF EXISTS booked_ticket;
+DROP TABLE IF EXISTS ticket;
+DROP TABLE IF EXISTS showing;
+DROP TABLE IF EXISTS showroom;
+DROP TABLE IF EXISTS theater;
+
+CREATE TABLE IF NOT EXISTS auditorium (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS seat (
+  id SERIAL PRIMARY KEY,
+  row INT NOT NULL,
+  number INT NOT NULL,
+  auditorium_id INT NOT NULL REFERENCES auditorium(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS screening (
+  id SERIAL PRIMARY KEY,
+  movie_id INT NOT NULL REFERENCES movie(id),
+  auditorium_id INT NOT NULL REFERENCES auditorium(id),
+  start_time TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ticket (
+  id SERIAL PRIMARY KEY,
+  screening_id INT NOT NULL REFERENCES screening(id),
+  seat_id INT NOT NULL REFERENCES seat(id),
+  booking_id INT NOT NULL REFERENCES booking(id),
+  tick_type ticket_type NOT NULL,
+
+  UNIQUE (screening_id, seat_id)
+);
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX IF NOT EXISTS idx_movie_title ON movie USING gist(title gist_trgm_ops);
+
+ALTER TABLE movie
+  ADD COLUMN IF NOT EXISTS director TEXT NOT NULL DEFAULT 'Unknown Director',
+  ADD COLUMN IF NOT EXISTS producer TEXT NOT NULL DEFAULT 'Unknown Producer',
+  ADD COLUMN IF NOT EXISTS actors TEXT[] NOT NULL DEFAULT '{}';
+
+CREATE TABLE IF NOT EXISTS review (
+  id SERIAL PRIMARY KEY,
+  customer_id INT NOT NULL REFERENCES customer(account_id),
+  movie_id INT NOT NULL REFERENCES movie(id),
+  stars INT NOT NULL CHECK (1 <= stars AND stars <= 5),
+  content TEXT NOT NULL
 );
 `;
 query(schema).catch(err => console.error(err))
