@@ -3,10 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Movie Theater Register</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="style.css">
+    <style>
+        @font-face {
+            font-family: 'Chom Extra Bold';
+            src: url('fonts/ChomExtraBold.ttf') format('truetype'); /* Adjust the path if the font is elsewhere */
+        }
+
+        body {
+            font-family: 'Chom Extra Bold', Arial, sans-serif;
+            background-color: #fffcfc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #002b5c;
+            padding: 10px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar img {
+            width: 80px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .brand h1 {
+            font-size: 20px;
+            margin: 0;
+            padding-left: 10px;
+        }
+
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navbar ul li {
+            margin-right: 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: border-bottom 0.3s ease; /* Smooth underline transition */
+        }
+
+        .navbar ul li a:hover {
+            text-decoration: underline;
+            border-bottom: 2px solid white; /* Adds underline effect when hovering */
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            text-align: center;
+            margin: 100px auto;
+        }
+
+        .container h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            text-align: left;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 95%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #002b5c;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #001f43;
+        }
+
+        p {
+            margin-top: 20px;
+            color: #666;
+        }
+
+        p a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+    <!-- Navbar Section -->
+    <header class="navbar">
+        <div class="brand">
+            <img src="images/logo.jpg" alt="Cinema Logo">
+            <h1>Cinema Booking Services</h1>
+        </div>
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </header>
+
+    <!-- Registration Form Section -->
     <div class="container">
         <h2>Register</h2>
         <form action="profile.html" method="POST">
