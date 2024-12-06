@@ -115,7 +115,7 @@ const Home = () => {
 
       <style jsx global>{`
         body {
-          font-family: 'Chom Extra Bold', Arial, sans-serif;
+          font-family: "Chom Extra Bold", Arial, sans-serif;
           background-color: #fffcfc;
           margin: 0;
           padding: 0;
@@ -128,10 +128,14 @@ const Home = () => {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          position: absolute;
+          width: 100%;
+          top: 0;
+          z-index: 10;
         }
 
         .navbar img {
-          width: 80px;
+          width: 60px;
           height: auto;
           margin-right: 10px;
         }
@@ -142,7 +146,7 @@ const Home = () => {
         }
 
         .navbar .brand h1 {
-          font-size: 20px;
+          font-size: 24px;
           margin: 0;
           padding-left: 10px;
         }
@@ -167,9 +171,7 @@ const Home = () => {
 
         .navbar ul li a:hover {
           text-decoration: underline;
-          border-bottom: 2px solid white;
         }
-
         .search-container {
           display: flex;
           align-items: center;
@@ -200,13 +202,31 @@ const Home = () => {
           margin-left: 10px;
         }
 
+
+        .header-banner {
+          background-image: url("/images/banner.jpg");
+          background-size: cover;
+          background-position: center;
+          height: 290px; 
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .header-banner h2 {
+          color: white;
+          font-size: 36px;
+          text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+        }
+
         .movie-card {
-          width: 300px;
+          width: 220px;
           background-color: #fff;
           border-radius: 10px;
           overflow: hidden;
           box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
           text-align: center;
+          margin: 20px;
         }
 
         .movie-slider {
@@ -217,7 +237,7 @@ const Home = () => {
 
         .movie-card img {
           width: 100%;
-          height: 400px;
+          height: 300px;
           object-fit: cover;
         }
 
@@ -235,11 +255,17 @@ const Home = () => {
 
         .movie-card button {
           padding: 10px 20px;
-          background-color: #007BFF;
+          background-color: #002b5c; /* Updated to match the dark blue color scheme */
           color: #fff;
           border: none;
           border-radius: 5px;
           cursor: pointer;
+          margin-bottom: 20px;
+          transition: background-color 0.3s;
+        }
+
+        .movie-card button:hover {
+          background-color: #001f43;
         }
 
         .movie-grid {
@@ -252,7 +278,8 @@ const Home = () => {
           position: relative;
         }
 
-        .prev-btn, .next-btn {
+        .prev-btn,
+        .next-btn {
           position: absolute;
           top: 50%;
           transform: translateY(-50%);
@@ -262,19 +289,20 @@ const Home = () => {
           background-color: #000;
           border-radius: 50%;
           padding: 10px;
+          z-index: 5;
         }
 
         .prev-btn {
-          left: 10px;
+          left: -30px;
         }
 
         .next-btn {
-          right: 10px;
+          right: -30px;
         }
       `}</style>
 
-      {/* Navbar */}
-      <nav className="navbar">
+       {/* Navbar */}
+       <nav className="navbar">
         <div className="brand">
           <img src="/images/logo.jpg" alt="Cinema Logo" />
           <h1>Cinema E-Booking</h1>
@@ -286,37 +314,48 @@ const Home = () => {
         </ul>
         {/* Search and Rating in Navbar */}
         <div className="search-container">
-          <input
-            type="text"
-            value={search}
-            onChange={handleSearchChange}
-            placeholder="Search for a movie..."
-          />
-          <button onClick={handleSearch}>Search</button>
-          <select onChange={handleRatingChange} value={rating}>
-            <option value="all">All Ratings</option>
-            <option value="G">G</option>
-            <option value="PG">PG</option>
-            <option value="PG-13">PG-13</option>
-            <option value="R">R</option>
-          </select>
-        </div>
+  <input
+    type="text"
+    value={search}
+    onChange={handleSearchChange}
+    placeholder="Search for a movie..."
+    aria-label="Search for a movie" // Added aria-label for accessibility
+  />
+  <button onClick={handleSearch}>Search</button>
+  <select
+    onChange={handleRatingChange}
+    value={rating}
+    title="Filter movies by rating" // Added title attribute for accessibility
+  >
+    <option value="all">All Ratings</option>
+    <option value="G">G</option>
+    <option value="PG">PG</option>
+    <option value="PG-13">PG-13</option>
+    <option value="R">R</option>
+  </select>
+</div>
+
       </nav>
+
+      {/* Header Banner */}
+      <div className="header-banner">
+        <h2>Movies</h2>
+      </div>
 
       {/* Now Showing Section */}
       <h2
-  style={{
-    textAlign: "center",
-    marginBottom: "20px",
-    marginTop: "40px", // Added this to move it down
-    color: "#333",
-  }}
-  id="food-drinks"
->
-  Now Playing
-</h2>
+        style={{
+          textAlign: "center",
+          marginBottom: "20px",
+          marginTop: "40px",
+          color: "#333",
+        }}
+        id="food-drinks"
+      >
+        Now Playing
+      </h2>
       <div className="movie-grid">
-        <div className="slider-container" style={{ position: "relative" }}>
+        <div className="slider-container">
           <span className="prev-btn arrow" onClick={prevNowShowing}>
             &#10094;
           </span>
@@ -326,7 +365,9 @@ const Home = () => {
                 <img src={movie[6]} alt={movie[1]} />
                 <h3>{movie[1]}</h3>
                 <p>Rated: {movie[3]}</p>
-                <button onClick={() => goToMoviePage(movie[0])}>View Movie</button>
+                <button onClick={() => goToMoviePage(movie[0])}>
+                  View Movie
+                </button>
               </div>
             ))}
           </div>
@@ -338,10 +379,10 @@ const Home = () => {
 
       {/* Coming Soon Section */}
       <h2 style={{ textAlign: "center", marginTop: "40px", color: "#333" }} id="promotions">
-        Coming Soon 
+        Coming Soon
       </h2>
       <div className="movie-grid">
-        <div className="slider-container" style={{ position: "relative" }}>
+        <div className="slider-container">
           <span className="prev-btn arrow" onClick={prevComingSoon}>
             &#10094;
           </span>
@@ -351,7 +392,9 @@ const Home = () => {
                 <img src={movie[6]} alt={movie[1]} />
                 <h3>{movie[1]}</h3>
                 <p>Rated: {movie[3]}</p>
-                <button onClick={() => goToMoviePage(movie[0])}>View Movie</button>
+                <button onClick={() => goToMoviePage(movie[0])}>
+                  View Movie
+                </button>
               </div>
             ))}
           </div>
