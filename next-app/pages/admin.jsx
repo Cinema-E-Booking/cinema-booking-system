@@ -92,7 +92,11 @@ export default function Home() {
           margin: 0;
           padding: 0;
           background-color: #f9f9f9;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
         }
+
         .header {
           display: flex;
           justify-content: space-between;
@@ -101,26 +105,32 @@ export default function Home() {
           background-color: #00165a;
           color: white;
         }
+
         h1 {
           margin: 0;
         }
+
         .nav-links {
           display: flex;
           gap: 20px;
         }
+
         .nav-links a {
           color: white;
           text-decoration: none;
           font-size: 16px;
         }
+
         .nav-links a:hover {
           text-decoration: underline;
         }
+
         .admin-buttons {
           display: flex;
           justify-content: center;
           margin: 20px;
         }
+
         .primary-btn {
           background-color: #003bb3;
           color: white;
@@ -131,9 +141,11 @@ export default function Home() {
           cursor: pointer;
           font-size: 16px;
         }
+
         .primary-btn:hover {
           background-color: #00287a;
         }
+
         .admin-options {
           margin: 20px auto;
           padding: 20px;
@@ -142,18 +154,21 @@ export default function Home() {
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
           border-radius: 8px;
         }
+
         .admin-forms {
           display: flex;
           align-items: center;
           gap: 10px;
           margin-bottom: 20px;
         }
+
         .input-field,
         .dropdown {
           padding: 8px;
           border-radius: 4px;
           border: 1px solid #ccc;
         }
+
         .add-btn {
           background-color: #28a745;
           color: white;
@@ -162,23 +177,28 @@ export default function Home() {
           border-radius: 4px;
           cursor: pointer;
         }
+
         .add-btn:hover {
           background-color: #218838;
         }
+
         .admin-table {
           width: 100%;
           border-collapse: collapse;
         }
+
         .admin-table th,
         .admin-table td {
           border: 1px solid #ddd;
           padding: 8px;
           text-align: left;
         }
+
         .admin-table th {
           background-color: #00165a;
           color: white;
         }
+
         .edit-btn {
           background-color: #ffc107;
           color: white;
@@ -187,9 +207,11 @@ export default function Home() {
           border-radius: 4px;
           cursor: pointer;
         }
+
         .edit-btn:hover {
           background-color: #e0a800;
         }
+
         .delete-btn {
           background-color: #dc3545;
           color: white;
@@ -198,15 +220,17 @@ export default function Home() {
           border-radius: 4px;
           cursor: pointer;
         }
+
         .delete-btn:hover {
           background-color: #c82333;
         }
+
         .footer {
           text-align: center;
           padding: 10px;
           background-color: #00165a;
           color: white;
-          margin-top: 20px;
+          margin-top: auto; /* Push the footer to the bottom */
         }
       `}</style>
     </>

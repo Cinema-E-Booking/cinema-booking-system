@@ -13,6 +13,7 @@ type Movie = {
   director: string;
   producer: string;
   actors: string[];
+  screening_time: string;
 };
 
 const CreateMovie = () => {
@@ -26,9 +27,10 @@ const CreateMovie = () => {
   const [director, setDirector] = useState("");
   const [producer, setProducer] = useState("");
   const [actors, setActors] = useState("");
+  const [screening_time, setScreeningTime] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -37,7 +39,7 @@ const CreateMovie = () => {
         const result = await response.json();
         if (result.data && Array.isArray(result.data.movies)) {
           setMovies(result.data.movies);
-          setSuccess("Movies loaded");
+          setSuccess("Movies loaded successfully.");
         } else {
           setError("Failed to load movies.");
         }
@@ -51,19 +53,19 @@ const CreateMovie = () => {
 
   const deleteMovie = async (id: number) => {
     try {
-      const response = await fetch(`./api/deleteMovie?id=${id}`, {
+      const response = await fetch(`/api/deleteMovie?id=${id}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        setMovies((prevMovies) => prevMovies.filter((movie) => movie[0] !== id));
+        setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== id));
         setSuccess("Movie deleted successfully");
       } else {
         const errorData = await response.json();
         setError(errorData.message);
       }
     } catch (error) {
-      setError("Error happened while deleting movie");
+      setError("An error occurred while deleting the movie.");
     }
   };
 
@@ -72,12 +74,13 @@ const CreateMovie = () => {
     setError("");
     setSuccess("");
 
-    if (!title || !category || !rating || !synopsis || !trailer_url || !image_url || !duration) {
-      setError("All fields required");
+    if (!title || !category || !rating || !synopsis || !trailer_url || !image_url || !duration || !screening_time) {
+      setError("All fields are required.");
       return;
     }
 
-    const movieData = {
+    const movieData: Movie = {
+      id: Date.now(), // Temporary unique ID
       title,
       category,
       rating,
@@ -87,14 +90,14 @@ const CreateMovie = () => {
       duration,
       director,
       producer,
-      actors,
+      actors: actors.split(","),
+      screening_time,
     };
 
     try {
-      const response = await fetch("./api/newMovie", {
+      const response = await fetch("/api/newMovie", {
         method: "POST",
         headers: {
-          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify(movieData),
@@ -105,7 +108,19 @@ const CreateMovie = () => {
         throw new Error(errorData.message);
       }
 
+      setMovies([...movies, movieData]);
       setSuccess("Movie created successfully!");
+      setTitle("");
+      setCategory("");
+      setRating("");
+      setSynopsis("");
+      setTrailer("");
+      setImage("");
+      setDuration("");
+      setDirector("");
+      setProducer("");
+      setActors("");
+      setScreeningTime("");
     } catch (err) {
       setError(String(err));
     }
@@ -117,137 +132,128 @@ const CreateMovie = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Manage Movies</title>
       </Head>
-      <header>
-        <a href="admin"> Admin Home </a>
+      <header style={{ textAlign: "center", padding: "10px", backgroundColor: "#00165a", color: "#fff" }}>
         <h1>Manage Movies</h1>
+        <a href="admin" style={{ color: "#fff", textDecoration: "underline" }}>
+          Admin Home
+        </a>
       </header>
       <main style={{ display: "flex", gap: "20px", padding: "20px" }}>
         {/* Left Panel: Form */}
         <div style={{ flex: 1, borderRight: "2px solid #ccc", paddingRight: "20px" }}>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <h2>Add a New Movie</h2>
-            <label htmlFor="movie-title">Movie Title:</label>
             <input
               type="text"
-              placeholder="Title"
+              placeholder="Movie Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
-            <label htmlFor="movie-category">Category:</label>
-            <select
-              id="Category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="Default">Select</option>
+            <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+              <option value="">Category</option>
               <option value="Now Showing">Now Showing</option>
               <option value="Coming Soon">Coming Soon</option>
             </select>
-            <label htmlFor="movie-rating">Rating:</label>
-            <select
-              id="Rating"
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              required
-            >
-              <option value="Default">Select</option>
-              <option value="g">G</option>
-              <option value="pg">PG</option>
-              <option value="pg-13">PG-13</option>
-              <option value="r">R</option>
-              <option value="nc-17">NC-17</option>
-              <option value="nr">NR</option>
+            <select value={rating} onChange={(e) => setRating(e.target.value)} required>
+              <option value="">Rating</option>
+              <option value="G">G</option>
+              <option value="PG">PG</option>
+              <option value="PG-13">PG-13</option>
+              <option value="R">R</option>
             </select>
-            <label htmlFor="duration">Duration (hh:mm:ss):</label>
             <input
               type="text"
-              placeholder="hh:mm:ss"
+              placeholder="Duration (hh:mm:ss)"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               required
-              pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
-              title="Please enter the duration in the format hh:mm:ss"
             />
-            <label htmlFor="director">Director:</label>
             <input
               type="text"
-              placeholder="Director"
-              value={director}
-              onChange={(e) => setDirector(e.target.value)}
+              placeholder="Screening Time (e.g., 18:30)"
+              value={screening_time}
+              onChange={(e) => setScreeningTime(e.target.value)}
               required
             />
-            <label htmlFor="producer">Producer:</label>
+            <input type="text" placeholder="Director" value={director} onChange={(e) => setDirector(e.target.value)} />
+            <input type="text" placeholder="Producer" value={producer} onChange={(e) => setProducer(e.target.value)} />
             <input
               type="text"
-              placeholder="Producer"
-              value={producer}
-              onChange={(e) => setProducer(e.target.value)}
-              required
-            />
-            <label htmlFor="actors">Cast:</label>
-            <input
-              type="text"
-              placeholder="Actors"
+              placeholder="Actors (comma-separated)"
               value={actors}
               onChange={(e) => setActors(e.target.value)}
-              required
             />
-            <label htmlFor="synopsis">Synopsis:</label>
             <textarea
-              id="Synopsis"
+              placeholder="Synopsis"
               value={synopsis}
               onChange={(e) => setSynopsis(e.target.value)}
               required
             />
-            <label htmlFor="trailer-link">Trailer Link (YouTube):</label>
             <input
               type="text"
-              placeholder="URL"
+              placeholder="Trailer URL"
               value={trailer_url}
               onChange={(e) => setTrailer(e.target.value)}
               required
             />
-            <label htmlFor="image-link">Image Link:</label>
             <input
               type="text"
-              placeholder="URL"
+              placeholder="Image URL"
               value={image_url}
               onChange={(e) => setImage(e.target.value)}
               required
             />
-            <button type="submit">Add Movie</button>
+            <button type="submit" style={{ padding: "10px", backgroundColor: "#4CAF50", color: "white", border: "none" }}>
+              Add Movie
+            </button>
           </form>
         </div>
+
         {/* Right Panel: Movies */}
-        <div style={{ flex: 2, paddingLeft: "20px" }}>
+        <div style={{ flex: 2 }}>
           <h2>Existing Movies</h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-            {movies.map((movie, index) => (
+            {movies.map((movie) => (
               <div
-                key={index}
+                key={movie.id}
                 style={{
                   border: "1px solid #ccc",
                   borderRadius: "8px",
                   padding: "10px",
                   width: "250px",
+                  backgroundColor: "#f9f9f9",
                 }}
               >
-                <h3>{movie[1]}</h3>
-                <p>{movie[4]}</p>
+                <img
+                  src={movie.image_url}
+                  alt={movie.title}
+                  style={{ width: "100%", borderRadius: "8px 8px 0 0" }}
+                />
+                <h3>{movie.title}</h3>
                 <p>
-                  <strong>Category:</strong> {movie[2]}
+                  <strong>Category:</strong> {movie.category}
                 </p>
-                <button onClick={() => deleteMovie(movie[0])}>Delete</button>
+                <p>
+                  <strong>Rating:</strong> {movie.rating}
+                </p>
+                <p>
+                  <strong>Screening Time:</strong> {movie.screening_time}
+                </p>
+                <button
+                  onClick={() => deleteMovie(movie.id)}
+                  style={{ padding: "5px", backgroundColor: "#f44336", color: "white", border: "none" }}
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
         </div>
       </main>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-      <footer>
+      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
+      <footer style={{ textAlign: "center", padding: "10px", backgroundColor: "#00165a", color: "#fff" }}>
         <p>© 2024 Cinema E-Booking - Manage Movies</p>
       </footer>
     </>
