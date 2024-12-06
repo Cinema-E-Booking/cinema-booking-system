@@ -10,6 +10,24 @@ const Home = () => {
         <Script src="@/public/search.js" defer />
       </Head>
 
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="brand">
+          <img src="/images/logo.jpg" alt="Cinema Logo" />
+          <h1>Cinema E-Booking</h1>
+        </div>
+        <ul>
+          <li><a href="/foodDrinks.tsx">Food & Drinks</a></li>
+          <li><a href="/promotions.tsx">Promotions & Rewards</a></li>
+          <li><a href="/profile">Profile</a></li>
+        </ul>
+      </nav>
+
+      {/* Header Banner */}
+      <div className="header-banner">
+        <h2>Food and Drinks</h2>
+      </div>
+
       <style jsx global>{`
         body {
           font-family: "Chom Extra Bold", Arial, sans-serif;
@@ -69,38 +87,9 @@ const Home = () => {
         .navbar ul li a:hover {
           text-decoration: underline;
         }
-        .search-container {
-          display: flex;
-          align-items: center;
-        }
-
-        .search-container input {
-          padding: 10px;
-          width: 200px;
-          font-size: 1rem;
-          border-radius: 5px;
-          border: 1px solid #ccc;
-        }
-
-        .search-container button {
-          padding: 10px 20px;
-          background-color: #007BFF;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          margin-left: 10px;
-        }
-
-        .search-container select {
-          padding: 10px;
-          font-size: 1rem;
-          border-radius: 5px;
-          margin-left: 10px;
-        }
 
         .header-banner {
-          background-image: url("/images/banner.jpg");
+          background-image: url("/images/food_drinks.jpg");
           background-size: cover;
           background-position: center;
           height: 290px; 
@@ -114,103 +103,7 @@ const Home = () => {
           font-size: 36px;
           text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
         }
-
-        .movie-card {
-          width: 220px;
-          background-color: #fff;
-          border-radius: 10px;
-          overflow: hidden;
-          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-          text-align: center;
-          margin: 20px;
-        }
-
-        .movie-slider {
-          display: flex;
-          justify-content: center;
-          gap: 20px;
-        }
-
-        .movie-card img {
-          width: 100%;
-          height: 300px;
-          object-fit: cover;
-        }
-
-        .movie-card h3 {
-          font-size: 1.2rem;
-          color: #333;
-          margin-bottom: 10px;
-        }
-
-        .movie-card p {
-          margin-bottom: 10px;
-          font-weight: bold;
-          color: #666;
-        }
-
-        .movie-card button {
-          padding: 10px 20px;
-          background-color: #002b5c; /* Updated to match the dark blue color scheme */
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          margin-bottom: 20px;
-          transition: background-color 0.3s;
-        }
-
-        .movie-card button:hover {
-          background-color: #001f43;
-        }
-
-        .movie-grid {
-          display: flex;
-          justify-content: center;
-          flex-wrap: wrap;
-        }
-
-        .slider-container {
-          position: relative;
-        }
-
-        .prev-btn,
-        .next-btn {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 2rem;
-          cursor: pointer;
-          color: #fff;
-          background-color: #000;
-          border-radius: 50%;
-          padding: 10px;
-          z-index: 5;
-        }
-
-        .prev-btn {
-          left: -30px;
-        }
-
-        .next-btn {
-          right: -30px;
-        }
       `}</style>
-
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="brand">
-          <img src="/images/logo.jpg" alt="Cinema Logo" />
-          <h1>Cinema E-Booking</h1>
-        </div>
-        <ul>
-          <li><a href="/foodDrinks.tsx">Food & Drinks</a></li>
-          <li><a href="/promotions.tsx">Promotions & Rewards</a></li>
-          <li><a href="/profile">Profile</a></li>
-        </ul>
-      </nav>
-      
-      {/* Other content */}
     </>
   );
 };

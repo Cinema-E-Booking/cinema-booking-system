@@ -309,7 +309,7 @@ const Home = () => {
         </div>
         <ul>
           <li><a href="/foodDrinks">Food & Drinks</a></li>
-          <li><a href="/promotions">Promotions & Rewards</a></li>
+          <li><a href="/promotions.jsx">Promotions & Rewards</a></li>
           <li><a href="/profile">Profile</a></li>
         </ul>
         {/* Search and Rating in Navbar */}
