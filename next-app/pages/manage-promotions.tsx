@@ -1,297 +1,326 @@
 import Head from "next/head";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-const CreatePromotion = () => {
-  const [code, setCode] = useState("");
-  const [percentOff, setPercentOff] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [promotions, setPromotions] = useState([]);
-  const [emailList, setEmailList] = useState<string[]>([]);
-  const [subject, setSubject] = useState("");
-  const [emailMessage, setEmailMessage] = useState("");
+// Define the type for promotions
+interface Promotion {
+    promoTitle: string;
+    promoDesc: string;
+    discount: string;
+    startDate: string;
+    endDate: string;
+}
 
-  useEffect(() => {
-    const fetchPromotions = async () => {
-      try {
-        const response = await fetch("/api/allPromotions");
-        const result = await response.json();
+const ManagePromotions = () => {
+    const [promoTitle, setPromoTitle] = useState('');
+    const [promoDesc, setPromoDesc] = useState('');
+    const [discount, setDiscount] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [promotions, setPromotions] = useState<Promotion[]>([]); // Set the correct type for promotions
 
-        if (result.data && Array.isArray(result.data.promotions)) {
-          setPromotions(result.data.promotions);
-          setSuccess("Promotions loaded");
-        } else {
-          setError("Failed to load promotions.");
+    useEffect(() => {
+        const fetchPromotions = async () => {
+            try {
+                const response = await fetch("/api/allPromotions");
+                const result = await response.json();
+
+                if (result.data && Array.isArray(result.data.promotions)) {
+                    setPromotions(result.data.promotions);
+                    setSuccess("Promotions loaded");
+                } else {
+                    setError("Failed to load promotions.");
+                }
+            } catch (error) {
+                setError("An error occurred while fetching promotions.");
+            }
+        };
+        fetchPromotions();
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        if (!promoTitle || !promoDesc || !discount || !startDate || !endDate) {
+            setError("All fields are required");
+            return;
         }
-      } catch (error) {
-        setError("An error occurred while fetching promotions.");
-      }
+
+        const newPromotion: Promotion = {
+            promoTitle,
+            promoDesc,
+            discount,
+            startDate,
+            endDate,
+        };
+
+        try {
+            const response = await fetch('/api/newPromotion', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newPromotion),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message);
+            }
+
+            setSuccess('Promotion created successfully!');
+            // Update promotions list after adding
+            setPromotions(prevPromotions => [...prevPromotions, newPromotion]);
+        } catch (err) {
+            setError("Could not create promotion");
+        }
     };
 
-    fetchPromotions();
-  }, []);
+    return (
+        <>
+            <Head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>Manage Promotions</title>
+            </Head>
+            <header className="navbar">
+                <div className="brand">
+                    <img src="/images/logo.jpg" alt="Cinema Logo" />
+                </div>
+                <div className="center-title">Manage Promotions</div>
+            </header>
+            <main>
+                {/* Add Promotion Form */}
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="promo-title">Promotion Title:</label>
+                    <input 
+                        type="text" 
+                        id="promo-title" 
+                        title="Promotion Title"
+                        placeholder="Enter promotion title"
+                        value={promoTitle} 
+                        onChange={(e) => setPromoTitle(e.target.value)} 
+                        required 
+                    />
 
-  const fetchEmails = async (promo: Array<String>) => {
-    setSubject("Movie Savings Deals!");
-    setEmailMessage(
-      "Use code " +
-        promo[0] +
-        " to save up to " +
-        promo[1] +
-        "% at checkout. Valid now through " +
-        promo[2]
-    );
-    try {
-      const response = await fetch(`./api/getEmails`);
-      const result = await response.json();
+                    <label htmlFor="promo-desc">Promotion Description:</label>
+                    <textarea 
+                        id="promo-desc" 
+                        title="Promotion Description"
+                        placeholder="Enter promotion description"
+                        value={promoDesc} 
+                        onChange={(e) => setPromoDesc(e.target.value)} 
+                        required 
+                    />
 
-      if (response.ok) {
-        setEmailList(result);
-        setSuccess("Email created");
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message);
-      }
-    } catch (error) {
-      setError("Error happened while fetching emails");
-    }
-  };
+                    <label htmlFor="promo-discount">Discount Percentage:</label>
+                    <input 
+                        type="number" 
+                        id="promo-discount" 
+                        title="Discount Percentage"
+                        placeholder="Enter discount percentage"
+                        value={discount} 
+                        onChange={(e) => setDiscount(e.target.value)} 
+                        required 
+                    />
 
-  const sendEmails = async () => {
-    try {
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailList, subject, emailMessage }),
-      });
+                    <label htmlFor="promo-start">Start Date:</label>
+                    <input 
+                        type="date" 
+                        id="promo-start" 
+                        title="Start Date"
+                        value={startDate} 
+                        onChange={(e) => setStartDate(e.target.value)} 
+                        required 
+                    />
 
-      if (!response.ok) {
-        setError("Error sending promotion emails:");
-      }
-    } catch (error) {
-      setError("Error happened while sending promotion emails");
-    }
-  };
+                    <label htmlFor="promo-end">End Date:</label>
+                    <input 
+                        type="date" 
+                        id="promo-end" 
+                        title="End Date"
+                        value={endDate} 
+                        onChange={(e) => setEndDate(e.target.value)} 
+                        required 
+                    />
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+                    <button type="submit">Add Promotion</button>
+                </form>
 
-    if (!code || !percentOff || !endTime) {
-      setError("All fields required");
-      return;
-    }
+                {/* Existing Promotions */}
+                <h2>Existing Promotions</h2>
+                {promotions.length > 0 ? (
+                    promotions.map((promotion, index) => (
+                        <div className="promo-card" key={index}>
+                            <img src="/images/promo.jpg" alt="Promo Image" />
+                            <div className="promo-info">
+                                <h3>{promotion.promoTitle}</h3>
+                                <p>{promotion.promoDesc}</p>
+                                <p><strong>Start Date:</strong> {promotion.startDate} | <strong>End Date:</strong> {promotion.endDate}</p>
+                                <div className="actions">
+                                    <button>Edit</button>
+                                    <button>Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>No promotions available.</p>
+                )}
 
-    const promotionData = {
-      code,
-      percentOff,
-      endTime,
-    };
+            </main>
+            <footer>
+                <p>&copy; 2024 Cinema E-Booking - Admin Panel</p>
+            </footer>
 
-    try {
-      const response = await fetch("./api/newPromotion", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(promotionData),
-      });
+            <style jsx>{`
+                @font-face {
+                  font-family: 'Chom Extra Bold';
+                  src: url('/fonts/ChomExtraBold.ttf') format('truetype');
+              }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
-      }
+              body {
+                  font-family: 'Roboto', Arial, sans-serif;
+                  background-color: #f5f5f5;
+                  color: #333;
+                  margin: 0;
+                  padding: 0;
+              }
 
-      setSuccess("Promotion created successfully!");
-    } catch (err) {
-      setError(String(err));
-    }
-  };
+              .navbar {
+                  background-color: #002b5c;
+                  padding: 10px;
+                  color: white;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+              }
 
-  return (
-    <>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Manage Promotions</title>
-      </Head>
-      <header
-        style={{
-          textAlign: "center",
-          padding: "10px",
-          backgroundColor: "#00165a",
-          color: "white",
-        }}
-      >
-        <h1>Manage Promotions</h1>
-        <a
-          href="/admin"
-          style={{ color: "white", textDecoration: "underline" }}
-        >
-          Admin Home
-        </a>
-      </header>
-      <main
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-          padding: "20px",
-        }}
-      >
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-            padding: "20px",
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            backgroundColor: "#f9f9f9",
-          }}
-        >
-          <h2>Add Promotion</h2>
-          <label htmlFor="promo-code">Promotion Code:</label>
-          <input
-            type="text"
-            placeholder="Promo Code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            required
-          />
-          <label htmlFor="promo-discount">Discount Percentage:</label>
-          <input
-            type="number"
-            placeholder="Discount Percentage"
-            value={percentOff}
-            onChange={(e) => setPercentOff(e.target.value)}
-            required
-          />
-          <label htmlFor="promo-end">End Date:</label>
-          <input
-            type="date"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            style={{
-              padding: "10px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-            }}
-          >
-            Add Promotion
-          </button>
-        </form>
+              .navbar img {
+                  width: 80px;
+                  height: auto;
+                  margin-right: 10px;
+              }
 
-        <h2>Existing Promotions</h2>
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            textAlign: "center",
-            border: "1px solid #ccc",
-            backgroundColor: "#fff",
-          }}
-        >
-          <thead>
-            <tr style={{ backgroundColor: "#00165a", color: "white" }}>
-              <th style={{ border: "1px solid #ccc", padding: "10px" }}>
-                Promo Code
-              </th>
-              <th style={{ border: "1px solid #ccc", padding: "10px" }}>
-                Discount
-              </th>
-              <th style={{ border: "1px solid #ccc", padding: "10px" }}>
-                End Date
-              </th>
-              <th style={{ border: "1px solid #ccc", padding: "10px" }}>
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {promotions.map((promotion, index) => (
-              <tr key={index}>
-                <td style={{ border: "1px solid #ccc", padding: "10px" }}>
-                  {promotion[0]}
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: "10px" }}>
-                  {promotion[1]}%
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: "10px" }}>
-                  {promotion[2]}
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: "10px" }}>
-                  <button
-                    style={{
-                      padding: "5px",
-                      backgroundColor: "#f44336",
-                      color: "white",
-                      border: "none",
-                      marginRight: "5px",
-                    }}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    style={{
-                      padding: "5px",
-                      backgroundColor: "#2196F3",
-                      color: "white",
-                      border: "none",
-                      marginRight: "5px",
-                    }}
-                    onClick={() => fetchEmails(promotion)}
-                  >
-                    Create Promo Email
-                  </button>
-                  <button
-                    style={{
-                      padding: "5px",
-                      backgroundColor: "#4CAF50",
-                      color: "white",
-                      border: "none",
-                    }}
-                    onClick={() => sendEmails()}
-                  >
-                    Send Promotion
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </main>
-      {error && (
-        <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
-          {error}
-        </p>
-      )}
-      {success && (
-        <p style={{ color: "green", textAlign: "center", marginTop: "10px" }}>
-          {success}
-        </p>
-      )}
-      <footer
-        style={{
-          textAlign: "center",
-          padding: "10px",
-          backgroundColor: "#00165a",
-          color: "white",
-        }}
-      >
-        <p>© 2024 Cinema E-Booking - Manage Promotions</p>
-      </footer>
-    </>
+              .center-title {
+                  flex-grow: 1;
+                  text-align: center;
+                  font-size: 24px;
+                  font-weight: bold;
+              }
+
+              main {
+                  padding: 30px;
+                  max-width: 800px;
+                  margin: auto;
+              }
+
+              form {
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                  margin-bottom: 30px;
+              }
+
+              form label {
+                  display: block;
+                  margin: 15px 0 5px;
+                  font-weight: bold;
+                  color: #555;
+              }
+
+              form input[type="text"],
+              form input[type="number"],
+              form input[type="date"],
+              form textarea {
+                  width: 100%;
+                  padding: 10px;
+                  margin-bottom: 15px;
+                  border-radius: 5px;
+                  border: 1px solid #ccc;
+              }
+
+              form button {
+                  background-color: #002b5c;
+                  color: #ffffff;
+                  padding: 10px 20px;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  font-size: 1rem;
+                  transition: background-color 0.3s;
+              }
+
+              form button:hover {
+                  background-color: #001f43;
+              }
+
+              .promo-card {
+                  display: flex;
+                  align-items: center;
+                  background-color: #ffffff;
+                  border-radius: 8px;
+                  padding: 20px;
+                  margin-bottom: 20px;
+                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              }
+
+              .promo-card img {
+                  width: 100px;
+                  height: 100px;
+                  border-radius: 8px;
+                  margin-right: 20px;
+              }
+
+              .promo-info {
+                  display: flex;
+                  flex-direction: column;
+              }
+
+              .promo-info h3 {
+                  color: #333;
+                  margin: 0;
+              }
+
+              .promo-info p {
+                  color: #666;
+                  margin: 5px 0;
+              }
+
+              .actions {
+                  margin-top: 10px;
+              }
+
+              .promo-info button {
+                  background-color: #002b5c;
+                  color: #ffffff;
+                  border: none;
+                  padding: 10px;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  font-size: 1rem;
+                  transition: background-color 0.3s;
+                  margin-right: 10px;
+              }
+
+              .promo-info button:hover {
+                  background-color: #001f43;
+              }
+
+              footer {
+                  text-align: center;
+                  padding: 15px;
+                  background-color: #002b5c;
+                  color: #ffffff;
+                  margin-top: 30px;
+              }
+          `}</style>
+      </>
   );
 };
 
-export default CreatePromotion;
+export default ManagePromotions;

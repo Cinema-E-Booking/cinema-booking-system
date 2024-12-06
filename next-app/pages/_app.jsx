@@ -1,9 +1,9 @@
 import "@/styles/style.css";
 import Head from "next/head";
-import { SessionProvider, useSession, signOut } from "next-auth/react"
-import { useRouter } from 'next/router'
+import { SessionProvider, useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 
-export default function App({ Component, pageProps: { session, ...pageProps} }) {
+export default function App({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <div>
       <Head>
@@ -22,6 +22,7 @@ const Navbar = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
+  
   if (router.pathname === '/login') {
     return null;
   }
@@ -30,15 +31,10 @@ const Navbar = () => {
     <nav>
       {session ? (
         <div>
-          <button onClick={() => signOut({callbackUrl: '/login'})}>Logout</button>
-          <a href="http://localhost:3000/editProfile">editProfile</a>
-          <a href="http://localhost:3000/">Home Page</a>
+          <button onClick={() => signOut({ callbackUrl: '/login' })}>Logout</button>
+          <a href="http://localhost:3000/editProfile">Edit Profile</a>
         </div>
-      ) : (
-        <div>
-          <a href="http://localhost:3000/">Home Page</a>
-        </div>
-      )}
+      ) : null}
     </nav>
   );
 };
