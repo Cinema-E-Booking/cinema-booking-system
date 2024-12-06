@@ -7,11 +7,17 @@
     "express": "^4.21.1",
     "express-session": "^1.18.1",
     "mysql2": "^3.11.4",
+    "next": "^15.0.4",
+    "next-auth": "^4.24.10",
     "nodemailer": "^6.9.16",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "resend": "^4.0.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "@types/nodemailer": "^6.4.17"
+    "@types/node": "^22.10.1",
+    "@types/nodemailer": "^6.4.17",
+    "@types/react": "^19.0.0"
   }
 }
