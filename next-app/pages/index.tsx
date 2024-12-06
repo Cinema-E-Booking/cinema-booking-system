@@ -308,8 +308,8 @@ const Home = () => {
           <h1>Cinema E-Booking</h1>
         </div>
         <ul>
-          <li><a href="/foodDrinks.tsx">Food & Drinks</a></li>
-          <li><a href="/promotions.tsx">Promotions & Rewards</a></li>
+          <li><a href="/foodDrinks">Food & Drinks</a></li>
+          <li><a href="/promotions">Promotions & Rewards</a></li>
           <li><a href="/profile">Profile</a></li>
         </ul>
         {/* Search and Rating in Navbar */}
