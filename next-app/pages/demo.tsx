@@ -55,6 +55,45 @@ export default function demo() {
         actors: ["Christian Bale ", "Cool Guy #2 "]
     };
 
+    const movie4: Movie = {
+        title: "Mad Max: Fury Road",
+        category: "Now Showing",
+        rating: "r",
+        synopsis: "In a post-apocalyptic wasteland, Max teams up with Furiosa to escape a tyrannical warlord and his army of psychopaths.",
+        trailer_url: "hEJnMQG9ev8?si=ffBRCHceZjLuCqBl",
+        image_url: "https://upload.wikimedia.org/wikipedia/en/6/6e/Mad_Max_Fury_Road.jpg",
+        duration: "120 minutes",
+        director: "George Miller",
+        producer: "George Miller / Doug Mitchell / P.J. Voeten",
+        actors: ["Tom Hardy", "Charlize Theron", "Nicholas Hoult"]
+    };
+
+    const movie5: Movie = {
+        title: "Crazy Rich Asians",
+        category: "Coming Soon",
+        rating: "pg-13",
+        synopsis: "A woman discovers that her boyfriend is from one of the wealthiest families in Singapore and must navigate the challenges of his high-society world.",
+        trailer_url: "ZQ-YX-5bAs0?si=yiOa_F-qij13JL6E",
+        image_url: "https://upload.wikimedia.org/wikipedia/en/b/ba/Crazy_Rich_Asians_poster.png",
+        duration: "121 minutes",
+        director: "Jon M. Chu",
+        producer: "Nina Jacobson / John Penotti / Brad Simpson",
+        actors: ["Constance Wu", "Henry Golding", "Michelle Yeoh"]
+    };
+
+    const movie6: Movie = {
+        title: "A Quiet Place",
+        category: "Now Showing",
+        rating: "pg-13",
+        synopsis: "In a world where monsters hunt by sound, a family must live in silence to survive while trying to find a way to fight back.",
+        trailer_url: "WR7cc5t7tv8?si=jR_5H7LVY83BxH7j",
+        image_url: "https://upload.wikimedia.org/wikipedia/en/a/a0/A_Quiet_Place_film_poster.png",
+        duration: "90 minutes",
+        director: "John Krasinski",
+        producer: "Michael Bay / Andrew Form / Brad Fuller",
+        actors: ["Emily Blunt", "John Krasinski", "Millicent Simmonds"]
+    };
+
     const createMovie = async (movieData: Movie) => {
         const response = await fetch('./api/newMovie', {
             method: 'POST',
@@ -132,6 +171,9 @@ export default function demo() {
         createMovie(movie1);
         createMovie(movie2);
         createMovie(movie3);
+        createMovie(movie4);
+        createMovie(movie5);
+        createMovie(movie6);
 
         createShowRoom(showRoom1);
         createShowRoom(showRoom2);
