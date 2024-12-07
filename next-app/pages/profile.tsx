@@ -19,9 +19,9 @@ const Profile: React.FC = () => {
     useEffect(() => {
         // Placeholder data for development
         const placeholderData: UserProfile = {
-            email: "example@example.com",
-            firstName: "John",
-            lastName: "Doe",
+            email: "alexarawles@gmail.com",
+            firstName: "Alexa",
+            lastName: "Rawles",
             password: "hashed-password",
             address: "123 Main St, City, State",
             promotions: "Subscribed",
@@ -41,39 +41,53 @@ const Profile: React.FC = () => {
                 <title>Profile</title>
             </Head>
             <div className={styles.profileContainer}>
-                <h2 className={styles.profileTitle}>Welcome to Your Profile!</h2>
-                <div className={styles.profileDetails}>
-                    <div className={styles.detailItem}>
-                        <strong>Email:</strong> {user.email}
+                <div className={styles.banner}></div>
+                <div className={styles.profileHeader}>
+                    <img src="/images/avatar.jpg" alt="User Avatar" className={styles.avatar} />
+                    <div>
+                        <h2 className={styles.name}>{user.firstName} {user.lastName}</h2>
+                        <p className={styles.email}>{user.email}</p>
                     </div>
-                    <div className={styles.detailItem}>
-                        <strong>First Name:</strong> {user.firstName}
-                    </div>
-                    <div className={styles.detailItem}>
-                        <strong>Last Name:</strong> {user.lastName}
-                    </div>
-                    <div className={styles.detailItem}>
-                        <strong>Password:</strong> ••••••••
-                    </div>
-                    <div className={styles.detailItem}>
-                        <strong>Address:</strong> {user.address}
-                    </div>
-                    <div className={styles.detailItem}>
-                        <strong>Promotions:</strong> {user.promotions}
-                    </div>
-                    {user.paymentCards.map((card, index) => (
-                        <div className={styles.detailItem} key={index}>
-                            <strong>Payment Card {index + 1}:</strong> **** **** **** {card.slice(-4)}
-                        </div>
-                    ))}
-                </div>
-                <div className={styles.profileActions}>
                     <Link href="/editProfile">
-                        <a className={styles.actionLink}>Edit Profile</a>
+                        <a className={styles.editButton}>Edit</a>
                     </Link>
-                    <Link href="/login">
-                        <a className={styles.actionLink}>Logout</a>
-                    </Link>
+                </div>
+
+                <div className={styles.formSection}>
+                    <div className={styles.inputGroup}>
+                        <label>Full Name</label>
+                        <input type="text" value={`${user.firstName} ${user.lastName}`} readOnly />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label>Nick Name</label>
+                        <input type="text" value="Your First Name" readOnly />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label>Gender</label>
+                        <input type="text" value="Your First Name" readOnly />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label>Country</label>
+                        <input type="text" value="Your First Name" readOnly />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label>Language</label>
+                        <input type="text" value="Your First Name" readOnly />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <label>Time Zone</label>
+                        <input type="text" value="Your First Name" readOnly />
+                    </div>
+                </div>
+
+                <div className={styles.emailSection}>
+                    <h3>My email Address</h3>
+                    <div className={styles.emailItem}>
+                        <input type="checkbox" checked readOnly />
+                        <p>{user.email}</p>
+                        <span>1 month ago</span>
+                    </div>
+                    <button className={styles.addEmailButton}>+ Add Email Address</button>
                 </div>
             </div>
         </>

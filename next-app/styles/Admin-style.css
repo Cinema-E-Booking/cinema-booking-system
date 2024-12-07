@@ -5,6 +5,9 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures body fills the viewport height */
 }
 
 header {
@@ -33,7 +36,12 @@ footer {
     padding: 20px;
     background-color: #222;
     color: white;
-    margin-top: 20px;
+    margin-top: auto; /* Pushes the footer to the bottom */
+}
+
+/* Main content container */
+main {
+    flex-grow: 1; /* Allows main content to stretch and fill space between header and footer */
 }
 
 /* Container for the Admin Sections */
@@ -44,6 +52,9 @@ footer {
     background-color: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    border: 1px solid #ddd; /* Add border for visual clarity */
+    min-height: 400px; /* Ensures the container stretches */
+    box-sizing: border-box;
 }
 
 /* Input fields */
@@ -81,9 +92,11 @@ button:hover {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    border: 1px solid #ddd; /* Ensure the table has a visible border */
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
     padding: 12px;
     border: 1px solid #ccc;
     text-align: left;
@@ -114,6 +127,33 @@ h2 {
     font-weight: bold;
     display: block;
     margin-bottom: 5px;
+}
+
+/* Buttons for table actions */
+.edit-btn {
+    background-color: #ffc107;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
 }
 
 /* Mobile responsiveness */

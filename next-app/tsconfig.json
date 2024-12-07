@@ -73,6 +73,6 @@
     "forceConsistentCasingInFileNames": true        /* Disallow inconsistently-cased references to the same file. */
 
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/registration.jsx", "pages/registration.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/registration.jsx", "pages/registration.jsx", "pages/foodDrinks.jsx"],
   "exclude": ["node_modules"]
 }
