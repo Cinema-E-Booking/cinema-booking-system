@@ -170,8 +170,8 @@ const Home = () => {
         }
 
         .navbar ul li a:hover {
-          text-decoration: underline;
-        }
+          background-color: rgba(255, 255, 255, 0.2); /* Light transparent hover effect */
+        }  
         .search-container {
           display: flex;
           align-items: center;

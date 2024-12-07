@@ -138,9 +138,9 @@ const CreateMovie = () => {
           Admin Home
         </a>
       </header>
-      <main style={{ display: "flex", gap: "20px", padding: "20px" }}>
+      <main style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "20px", padding: "20px" }}>
         {/* Left Panel: Form */}
-        <div style={{ flex: 1, borderRight: "2px solid #ccc", paddingRight: "20px" }}>
+        <div style={{ borderRight: "2px solid #ccc", paddingRight: "20px" }}>
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <h2>Add a New Movie</h2>
             <input
@@ -149,13 +149,24 @@ const CreateMovie = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
-            <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+            >
               <option value="">Category</option>
               <option value="Now Showing">Now Showing</option>
               <option value="Coming Soon">Coming Soon</option>
             </select>
-            <select value={rating} onChange={(e) => setRating(e.target.value)} required>
+            <select
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
+              required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+            >
               <option value="">Rating</option>
               <option value="G">G</option>
               <option value="PG">PG</option>
@@ -168,6 +179,7 @@ const CreateMovie = () => {
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
             <input
               type="text"
@@ -175,20 +187,35 @@ const CreateMovie = () => {
               value={screening_time}
               onChange={(e) => setScreeningTime(e.target.value)}
               required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
-            <input type="text" placeholder="Director" value={director} onChange={(e) => setDirector(e.target.value)} />
-            <input type="text" placeholder="Producer" value={producer} onChange={(e) => setProducer(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Director"
+              value={director}
+              onChange={(e) => setDirector(e.target.value)}
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+            />
+            <input
+              type="text"
+              placeholder="Producer"
+              value={producer}
+              onChange={(e) => setProducer(e.target.value)}
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+            />
             <input
               type="text"
               placeholder="Actors (comma-separated)"
               value={actors}
               onChange={(e) => setActors(e.target.value)}
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
             <textarea
               placeholder="Synopsis"
               value={synopsis}
               onChange={(e) => setSynopsis(e.target.value)}
               required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", resize: "vertical" }}
             />
             <input
               type="text"
@@ -196,6 +223,7 @@ const CreateMovie = () => {
               value={trailer_url}
               onChange={(e) => setTrailer(e.target.value)}
               required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
             <input
               type="text"
@@ -203,17 +231,18 @@ const CreateMovie = () => {
               value={image_url}
               onChange={(e) => setImage(e.target.value)}
               required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
-            <button type="submit" style={{ padding: "10px", backgroundColor: "#4CAF50", color: "white", border: "none" }}>
+            <button type="submit" style={{ padding: "10px", backgroundColor: "#4CAF50", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>
               Add Movie
             </button>
           </form>
         </div>
 
         {/* Right Panel: Movies */}
-        <div style={{ flex: 2 }}>
+        <div>
           <h2>Existing Movies</h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "20px" }}>
             {movies.map((movie) => (
               <div
                 key={movie.id}
@@ -221,7 +250,6 @@ const CreateMovie = () => {
                   border: "1px solid #ccc",
                   borderRadius: "8px",
                   padding: "10px",
-                  width: "250px",
                   backgroundColor: "#f9f9f9",
                 }}
               >
@@ -242,7 +270,7 @@ const CreateMovie = () => {
                 </p>
                 <button
                   onClick={() => deleteMovie(movie.id)}
-                  style={{ padding: "5px", backgroundColor: "#f44336", color: "white", border: "none" }}
+                  style={{ padding: "5px", backgroundColor: "#f44336", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
                 >
                   Delete
                 </button>
