@@ -1,96 +1,78 @@
 .div {
-    font-family: Arial, sans-serif;
-    background-color: #000; /* Black background */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #fff; /* White text */
-}
-
-.screen {
-    background-color: #444; /* Dark screen background */
-    color: white;
-    padding: 10px;
-    margin: 20px 0;
-    width: 80%;
     text-align: center;
-    font-size: 24px;
-    border-radius: 25px 25px 0 0;
-}
-
-.seatinggrid {
-    display: flex;
-    flex-direction: column; /* Stack rows vertically */
-    align-items: center; /* Center the rows */
-    gap: 15px; /* Spacing between rows */
-    margin: 0 auto;
-    max-width: 600px; /* Adjust width to fit the screen layout better */
-}
-
-.row {
+  }
+  
+  .screen {
+    background-color: #ccc;
+    padding: 10px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-radius: 5px;
+  }
+  
+  .seatinggrid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr); /* 20 columns */
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  
+  .frontrow {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr); /* 20 columns */
+    gap: 10px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  
+  .row {
     display: flex;
     justify-content: center;
-    gap: 10px; /* Space between seats in a row */
-}
-
-.seat {
-    width: 50px;
-    height: 50px;
-    background-color: white; /* Available seat color */
-    border: 2px solid #444;
+  }
+  
+  .seat {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #002b5c;
     border-radius: 5px;
     cursor: pointer;
-}
-
-.seatavailable {
-    background-color: white;
-}
-
-.seatoccupied {
-    background-color: red; /* Occupied seat color */
+  }
+  
+  .seatselected {
+    background-color: #007bff; /* Blue for selected seats */
+  }
+  
+  .seatoccupied {
+    background-color: #d9534f; /* Red for occupied seats */
     cursor: not-allowed;
-}
-
-.seatselected {
-    background-color: #6e94ff; /* Selected seat color */
-}
-
-.legend {
-    margin: 20px;
+  }
+  
+  .legend {
+    margin-top: 20px;
     display: flex;
-    justify-content: space-around;
-    color: white;
-}
-
-.availablelegend,
-.selectedlegend,
-.occupiedlegend {
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .legend div {
     display: inline-block;
-    margin: 5px 10px;
-    padding: 5px;
-    background-color: #444;
-    border-radius: 4px;
-}
-
-.availablelegend {
-    background-color: white;
-    color: black;
-}
-
-.selectedlegend {
-    background-color: #6e94ff;
-}
-
-.occupiedlegend {
-    background-color: red;
-}
-
-/* Screen text style */
-.screen {
-    background-color: #333;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    text-align: center;
-    width: 50%;
-}
+    width: 25px;
+    height: 25px;
+    border: 1px solid #000;
+    margin-right: 10px;
+  }
+  
+  .confirmbutton {
+    background-color: #002b5c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .confirmbutton:hover {
+    background-color: #0056a6;
+  }
+  
