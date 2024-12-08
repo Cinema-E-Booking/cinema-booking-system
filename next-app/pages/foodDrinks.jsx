@@ -17,8 +17,8 @@ const Home = () => {
           <h1>Cinema E-Booking</h1>
         </div>
         <ul>
-          <li><a href="/index">Home</a></li>
-          <li><a href="/promotions.jsx">Promotions & Rewards</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/promotions">Promotions & Rewards</a></li>
           <li><a href="/profile">Profile</a></li>
         </ul>
       </nav>
