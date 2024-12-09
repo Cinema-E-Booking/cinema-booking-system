@@ -213,3 +213,56 @@ export async function returnUser(email: string) {
     return null;
   }
 }
+
+export async function returnAllCustomers() {
+  const queryText = `
+  SELECT
+    account_id, first_name, last_name, email, state, wants_promotions, billing_address
+  FROM
+    customer
+  `
+
+  const res = await query(queryText)
+
+  const out: Customer[] = [];
+  for (const row of res.rows) {
+    out.push({
+      accountId: row.account_id,
+      firstName: row.first_name,
+      lastName: row.last_name,
+      email: row.email,
+      status: row.state,
+      wantsPromotions: row.wants_promotions,
+      billingAddress: row.billing_address,
+    })
+  }
+
+  return out;
+}
+
+export async function returnAllAdmins() {
+  const queryText = `
+  SELECT
+    c.account_id, c.first_name, c.last_name, c.email, c.state, c.wants_promotions, c.billing_address
+  FROM
+    customer c
+  JOIN
+    admin a ON c.account_id = a.account_id
+  `
+  const res = await query(queryText)
+
+  const out: Customer[] = [];
+  for (const row of res.rows) {
+    out.push({
+      accountId: row.account_id,
+      firstName: row.first_name,
+      lastName: row.last_name,
+      email: row.email,
+      status: row.state,
+      wantsPromotions: row.wants_promotions,
+      billingAddress: row.billing_address,
+    })
+  }
+
+  return out;
+}

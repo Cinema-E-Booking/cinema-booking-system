@@ -1,6 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { returnAllCustomers, returnAllAdmins } from "../lib/api_references/user"; 
 
 export default function AdminProfile() {
   const [editMode, setEditMode] = useState(false);
@@ -15,12 +17,22 @@ export default function AdminProfile() {
     profilePicture: "/images/default-profile.jpg",
   });
 
-  const [users, setUsers] = useState([
-    { id: 1, name: "John Doe", role: "Customer", isEditing: false },
-    { id: 2, name: "Jane Smith", role: "Admin", isEditing: false },
-  ]);
+  const [users, setUsers] = useState([{firstName: "", lastName: ""}]);
+  const [admins, setAdmins] = useState([{firstName: "", lastName: ""}]);
 
   const [newUser, setNewUser] = useState({ name: "", role: "" });
+  const {data: session, status} = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+        try {
+            loadUsers();
+        } catch (err) {
+            console.log(err)
+            setError('Something went wrong');
+        }
+    }
+  }, [status, session])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +76,16 @@ export default function AdminProfile() {
       user.id === id ? { ...user, name: newName } : user
     ));
   };
+
+  const loadUsers = async () => {
+    const customers = await returnAllCustomers()
+    console.log("Customers: ", customers)
+    setUsers(customers);
+
+    const admins = await returnAllAdmins()
+    console.log("Admins: ", admins)
+    setAdmins(admins);
+  }
 
   return (
     <>
@@ -241,27 +263,27 @@ export default function AdminProfile() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>User Name</th>
+                <th>Customer Name</th>
                 <th>Role</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id}>
+                <tr key={user.accountId}>
                   <td>
                     {user.isEditing ? (
                       <input
                         type="text"
-                        value={user.name}
+                        value={`${user.firstName} ${user.lastName}`}
                         onChange={(e) => handleEditUserChange(user.id, e.target.value)}
                         className="editable-field"
                       />
                     ) : (
-                      user.name
+                      `${user.firstName} ${user.lastName}`
                     )}
                   </td>
-                  <td>{user.role}</td>
+                  <td>{/*user.role*/ "Customer"}</td>
                   <td>
                     <button className="edit-btn" onClick={() => toggleEditUser(user.id)}>
                       {user.isEditing ? "Save" : "Edit"}
@@ -274,7 +296,44 @@ export default function AdminProfile() {
               ))}
             </tbody>
           </table>
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Admin Name</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {admins.map((admin) => (
+                <tr key={admin.accountId}>
+                  <td>
+                    {admin.isEditing ? (
+                      <input
+                        type="text"
+                        value={`${admin.firstName} ${admin.lastName}`}
+                        onChange={(e) => handleEditUserChange(admin.id, e.target.value)}
+                        className="editable-field"
+                      />
+                    ) : (
+                      `${admin.firstName} ${admin.lastName}`
+                    )}
+                  </td>
+                  <td>{/*user.role*/ "Admin"}</td>
+                  <td>
+                    <button className="edit-btn" onClick={() => toggleEditUser(admin.id)}>
+                      {admin.isEditing ? "Save" : "Edit"}
+                    </button>
+                    <button className="delete-btn" onClick={() => deleteUser(admin.id)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+        
       </main>
 
       {/* Footer */}

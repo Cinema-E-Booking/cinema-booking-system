@@ -98,3 +98,37 @@ export async function getCustomerAccountId (email: string|null|undefined) {
 
     return null;
 }
+
+export async function returnAllCustomers () {
+    try {
+        const response = await fetch('./api/getAllCustomers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+        const responseData = await response.json();
+        const customers = await responseData.response;
+
+        return customers;
+    } catch (err) {
+        console.log(err);
+    }
+
+    return null;
+}
+
+export async function returnAllAdmins () {
+    try {
+        const response = await fetch('./api/getAllAdmins', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+        const responseData = await response.json();
+        const admins = await responseData.response;
+
+        return admins;
+    } catch (err) {
+        console.log(err)
+    }
+
+    return null;
+}

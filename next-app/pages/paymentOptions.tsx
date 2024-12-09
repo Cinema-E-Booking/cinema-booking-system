@@ -12,14 +12,25 @@ const paymentOptions = () => {
     const [success, setSuccess] = useState('');
     const [cards, setCards] = useState<Card[]>([]);
 
-    const {data: session} = useSession();
+    const {data: session, status} = useSession();
 
     interface Card {
         id: number;
         cardOwnerId: number;
         cardNumberLastFour: string;
         expirationDate: string;
-      } 
+    } 
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            try {
+                onRefresh();
+            } catch (err) {
+                console.log(err)
+                setError('Something went wrong');
+            }
+        }
+    }, [status, session]) 
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -54,8 +65,6 @@ const paymentOptions = () => {
 
     const onRefresh = async () => {
 
-        console.log('Page Refreshed!')
-        setSuccess('Page Refreshed!')
         try {
 
           const userId = await getCustomerAccountId(session?.user?.email)
@@ -110,7 +119,6 @@ const paymentOptions = () => {
                 />
                 <button type="submit">Add Payment Option</button>
                 </form>
-            <button onClick={() => onRefresh()}>View Cards</button>
             
             <ul>
             {cards.map(card => (
