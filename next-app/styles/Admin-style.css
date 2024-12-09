@@ -162,3 +162,8 @@ h2 {
         grid-template-columns: 1fr;
     }
 }
+.navbar ul li a[href="/manage-movies"],
+.navbar ul li a[href="/manage-promotions"],
+.navbar ul li a[href="/admin"] {
+  color: white;
+}
