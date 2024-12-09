@@ -1,5 +1,5 @@
 import Head from "next/head"
-import { NumberLiteralType } from "typescript";
+import { newMovie } from "../lib/api_references/movies"
 
 export default function demo() {
 
@@ -95,14 +95,13 @@ export default function demo() {
     };
 
     const createMovie = async (movieData: Movie) => {
-        const response = await fetch('./api/newMovie', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(movieData),
-        })
+        const response = await newMovie(movieData);
+
+        if (response) {
+
+        } else {
+            console.log('Something went wrong')
+        }
     }
 
     interface Seat {

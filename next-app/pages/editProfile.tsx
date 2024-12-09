@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { FormEvent, useState, useEffect }  from "react";
 import { useSession } from "next-auth/react";
+import { returnUserId, getCustomerData, changeCustomerData } from "../lib/api_references/user"
 
 const editProfile = () => {
 
@@ -25,29 +26,8 @@ const editProfile = () => {
     }, [status, session])
 
     const updateData = async (email: any) => {
-        const response = await fetch('./api/returnUser', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({email: session?.user?.email}),
-        });
-        const userData = await response.json();
-        const userId = await userData.response;
-        const id = userId.id;
-
-        const customerResponse = await fetch('./api/getCustomerData', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({id: id}),
-        });
-        const responseData = await customerResponse.json();
-        const customerData = await responseData.response;
-        const data = customerData;
+        const id = await returnUserId(session?.user?.email);
+        const data = await getCustomerData(id);
 
         setFirstName(data.first_name);
         setLastName(data.last_name);
@@ -57,38 +37,14 @@ const editProfile = () => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-
-            const response = await fetch('./api/returnUser', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({email: session?.user?.email}),
-            });
-            const userData = await response.json();
-            const userId = await userData.response;
-            const id = userId.id;
-
-            await fetch('./api/changeCustomerData', {
-                method: 'POST',
-                body: JSON.stringify({
-                    accountId: Number(id),
-                    firstName,
-                    lastName,
-                    wantsPromotions,
-                    billingAddress,
-                }),
-                headers: { 'Content-Type': 'application/json' },
-              });
-
-              setError('');
-              setSuccess('Data Saved Succesfully!');
-
-        } catch (err) {
-            console.log(err)
-            setError('Something went wrong')
+        const id = await returnUserId(session?.user?.email);
+        const changedEffectively = await changeCustomerData(id, firstName, lastName, wantsPromotions, billingAddress)
+        if (changedEffectively) {
+            setError('')
+            setSuccess('Data Changed Succesfully')
+        } else {
+            setSuccess('')
+            setError('Data was not able to be changed')
         }
     }
         

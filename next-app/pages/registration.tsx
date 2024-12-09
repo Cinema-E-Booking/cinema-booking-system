@@ -2,12 +2,14 @@ import Head from "next/head";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { newCustomer } from "../lib/api_references/user"
 
 const CreateCustomer = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
+    const [billingAddress, setBillingAddress] = useState<string>('');
     const [wantsPromotions, setWantsPromotions] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
@@ -22,36 +24,15 @@ const CreateCustomer = () => {
             return;
         }
 
-        const customerData = {
-            email,
-            password,
-            firstName,
-            lastName,
-            wantsPromotions,
-        };
+        const customer = await newCustomer(email, password, firstName, lastName, wantsPromotions, billingAddress); 
 
-        try {
-            const response = await fetch('/api/newCustomer', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(customerData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message);
-            }
-
-            setSuccess("Customer created successfully!");
-            // Automatically sign in the user after successful registration
+        if (customer) {
+            setError('')
+            setSuccess('Registered Succesfully')
             signIn("email", { email: email, callbackUrl: 'http://localhost:3000' });
-
-        } catch (err) {
-            setError("Could Not Create Customer");
-            console.error(err);
+        } else {
+            setSuccess('')
+            setError('Problem with registering')
         }
     };
 
@@ -113,6 +94,15 @@ const CreateCustomer = () => {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <label htmlFor="billingAddress">Billing Address:</label>
+                    <input
+                        type="billingAddress"
+                        id="billingAddress"
+                        placeholder="Billing Address"
+                        value={billingAddress}
+                        onChange={(e) => setBillingAddress(e.target.value)}
                         required
                     />
                     <label>

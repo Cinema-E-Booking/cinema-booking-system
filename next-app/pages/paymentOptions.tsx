@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { FormEvent, useState, useEffect }  from "react";
 import { useSession } from 'next-auth/react';
+import { addPaymentMethod, getTotalCards, getPaymentMethods, handleCardDelete } from "../lib/api_references/payments";
+import { getCustomerAccountId } from "../lib/api_references/user";
 
 const paymentOptions = () => {
 
@@ -29,37 +31,12 @@ const paymentOptions = () => {
 
         try {
 
-            const userIdData = await fetch('./api/getId', {
-                method: 'POST',
-                body: JSON.stringify({
-                  email: session?.user?.email,
-                }),
-                headers: { 'Content-Type': 'application/json' },
-              });
-            const userData = await userIdData.json();
-            const userId = await userData.response;
+            const userId = await getCustomerAccountId(session?.user?.email)
 
-            const cardRes = await fetch('./api/getTotalCards', {
-                method: 'POST',
-                body: JSON.stringify({
-                  id: userId,
-                }),
-                headers: { 'Content-Type': 'application/json' },
-              });
-
-            const cardNumberData = await cardRes.json();
-            const cardTotal = await cardNumberData.response;
+            const cardTotal = await getTotalCards(userId);
 
             if (cardTotal < 4) {
-            const response = await fetch('./api/addPaymentMethods', {
-                method: 'POST',
-                body: JSON.stringify({
-                  accountId: Number(userId),
-                  cardNumber,
-                  expirationDate,
-                }),
-                headers: { 'Content-Type': 'application/json' },
-              });
+            const response = await addPaymentMethod(userId, cardNumber, expirationDate)
 
               setError('')
               setSuccess('Card added succesfully')
@@ -81,29 +58,12 @@ const paymentOptions = () => {
         setSuccess('Page Refreshed!')
         try {
 
-            const userIdData = await fetch('./api/getId', {
-                method: 'POST',
-                body: JSON.stringify({
-                  email: session?.user?.email,
-                }),
-                headers: { 'Content-Type': 'application/json' },
-              });
-            const userData = await userIdData.json();
-            const userId = await userData.response;
-            console.log('User ID:', userId);
+          const userId = await getCustomerAccountId(session?.user?.email)
 
-            const response = await fetch('./api/getPaymentMethods', {
-                method: 'POST',
-                body: JSON.stringify({
-                  accountId: Number(userId),
-                }),
-                headers: { 'Content-Type': 'application/json' },
-              });
-
-            const cardsData = await response.json();
-            console.log('CardsData:', cardsData);
-            const cardsDataArray = cardsData.response as Card[]; // Cast response to Card[]
-            setCards(cardsDataArray);
+            const cardsDataArray = await getPaymentMethods(userId);
+          if (cardsDataArray != null) {
+              setCards(cardsDataArray);
+          }
         
         } catch (err) {
             console.log(err);
@@ -114,18 +74,16 @@ const paymentOptions = () => {
     }
 
     const handleDelete = async (cardId: number) => {
-        try {
-            await fetch('./api/removePayment', { // Replace with your delete API endpoint
-                method: 'DELETE',
-                body: JSON.stringify({ cardId: cardId }),
-                headers: { 'Content-Type': 'application/json' },
-            });
-            setSuccess('Card deleted successfully');
-            onRefresh();
-        } catch (err) {
-            console.log(err);
-            setError('Something went wrong while deleting the card.');
-        }
+      const response = await handleCardDelete(cardId)
+      if (response) {
+        setError('')
+        setSuccess('Card Deleted Succesfully')
+
+        onRefresh();
+      } else {
+        setSuccess('')
+        setError('Card Could Not Be Deleted')
+      }
     }
 
     return (
