@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import Script from "next/script";
 import { useRouter } from "next/router";
+import { getAllMovies } from "../lib/api_references/movies"
 
 const Home = () => {
   const [error, setError] = useState("");
@@ -20,18 +21,15 @@ const Home = () => {
 
   useEffect(() => {
     const fetchMovies = async () => {
-      try {
-        const response = await fetch("/api/allMovies");
-        const result = await response.json();
-        if (result.data && Array.isArray(result.data.movies)) {
-          setMovies(result.data.movies);
-          setRowCount(result.data.rowCount);
-          setSuccess("Movies loaded");
-        } else {
-          setError("Failed to load movies.");
-        }
-      } catch (error) {
-        setError("An error occurred while fetching movies.");
+      const data = await getAllMovies();
+      if (data != null) {
+        setMovies(data.movies);
+        setRowCount(data.rowCount);
+        setSuccess("Movies loaded");
+        setError('')
+      } else {
+        setSuccess('');
+        setError('Could not Load Movies');
       }
     };
 

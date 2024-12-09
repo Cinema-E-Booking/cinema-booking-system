@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Script from "next/script";
+import { getMovie } from "../lib/api_references/movies"
 
 const MoviePage = () => {
     const [title, setTitle] = useState('Mock Movie Title');
@@ -34,6 +35,34 @@ const MoviePage = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
     const data = router.query;
+
+    useEffect(() => {
+        const result = fetchMovie();     
+    }, [session, status]);
+
+    const fetchMovie = async () => {
+        console.log("The DATA is: ", data)
+        console.log("The ID is: ", data.id)
+        const result = await getMovie(Number(data.id)) 
+        console.log("The result is:", result)
+        setTitle(result.title);
+        setRating(result.rating);
+        setDuration(`${result.duration.hours} Hours and ${result.duration.minutes} Minutes`);
+        setSynopsis(result.synopsis);
+        setImage(result.image_url);
+        setTrailer('https://www.youtube.com/embed/' + result.trailer_url);
+        setCategory(result.category);
+        setDirector(result.director);
+        setProducer(result.producer);
+        setActors(result.actors);
+        setMovieId(result.movieId);
+        //console.log('Result: ', result);
+        //console.log('Result.result: ', result.result);
+        //console.log('MovieId: ', result.result.movieId);
+        //getShowTime(result.movieId);
+
+        return result;
+    }
 
     const goToBookingPage = (movieId: string) => {
         const id: number = parseInt(movieId, 10);
