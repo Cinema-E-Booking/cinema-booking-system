@@ -227,4 +227,19 @@ export async function screeningWouldConflict(opts: CreateScreeningOpts) {
   const res = await query(queryText, values);
 
   return res.rows[0].conflicts !== 0;
+}
+
+export async function deleteSeat(seatId: number) {
+  const queryText = `DELETE FROM seat WHERE id = $1`;
+  const values = [seatId];
+  console.log('server check:',seatId);
+
+  const res = await query(queryText, values);
+  console.log(res);
+
+  if (res.rowCount == 1) {
+    return "seat deleted";
+  }
+ 
+  return "seat not deleted";
 };

@@ -8,6 +8,7 @@ export default function BookingPage() {
   const [title, setTitle] = useState('');
   const [screenings, setScreenings] = useState<Screening[]>([]);
   const { data: session, status } = useSession();
+  const [screeningId, setScreeningId] = useState('');
 
   interface Screening {
     id: number;
@@ -64,6 +65,16 @@ export default function BookingPage() {
       console.log(error);
     }
   };
+
+const goToSeats = (e: React.FormEvent) => {
+  e.preventDefault();
+  const id: number = parseInt(screeningId, 10);
+  console.log('booking check: ', screeningId);
+  router.push({
+    pathname: '/seats-more',
+    query: {id},
+  });
+};
 
   return (
     <>
@@ -170,42 +181,55 @@ export default function BookingPage() {
       </header>
 
       <main>
-        <h2>Booking for {title}</h2>
+        <h2>
+            Booking for {title}
+        </h2>
+        <form onSubmit={goToSeats} method="POST">
+          <label htmlFor="age">Select Age:</label>
+            <select id="age" name="age">
+                <option value="17 or Less">17 or Less</option>
+                <option value="18 or Older">18 or Older</option>
+            </select>
 
-        <div className="showtimes-container">
-          {screenings.length === 0 ? (
-            <p>No screenings available.</p>
-          ) : (
-            screenings.map((screening) => (
-              <div key={screening.id} className="showtime">
-                <h3>Auditorium: {screening.auditorium?.name || "loading"}</h3>
-                <p>
-                  <strong>Start Time:</strong> { 
-                  (() => {
-                    const startTime = new Date(screening.startTime);    
-                    return startTime.toLocaleString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true,
-                    });
-                  })() || "loading"}
-                </p>
-              </div>
-            ))
-          )}
-        </div>
+            <label htmlFor="id">Select Screening Id:</label>
+            <input
+              type="text"
+              placeholder="Screening ID"
+              value={screeningId}
+              onChange={(e) => setScreeningId(e.target.value)}
+              required
+            />
 
-        <label htmlFor="age">Select Age:</label>
-        <select id="age" name="age">
-          <option value="17 or Less">17 or Less</option>
-          <option value="18 or Older">18 or Older</option>
-        </select>
-
-        <button type="submit">Confirm Booking</button>
+            <label htmlFor="showTimes">Show Times:</label>
+            {screenings.length === 0 ? (
+                            <p>No screenings available.</p>
+                            ) : (
+                            <ul>
+                                {screenings.map(screening => (
+                                <li key={screening.id}>
+                                <p>Screening ID: {screening.id}</p>
+                                <p>Auditorium: {screening.auditorium?.name || "loading"}</p>
+                                <p>
+                                <strong>Start Time:</strong> { 
+                                (() => {
+                                const startTime = new Date(screening.startTime);    
+                                  return startTime.toLocaleString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                  });
+                                  })() || "loading"}
+                                </p>
+                                </li>
+                        ))}
+                </ul>
+            )}
+            <button type="submit">Confirm Booking</button>
+        </form>
       </main>
 
       <footer>
