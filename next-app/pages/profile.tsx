@@ -1,15 +1,19 @@
 import Head from "next/head";
 import Link from "next/link";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import styles from "@/styles/Profile.module.css"; // Import CSS module
+import { returnUserId, getCustomerData, changeCustomerData } from "../lib/api_references/user"
+import { useSession } from "next-auth/react";
+import { getPaymentMethods, handleCardDelete, getTotalCards, addPaymentMethod } from "../lib/api_references/payments"
+import{ getCustomerAccountId } from "../lib/api_references/user"
 
 interface UserProfile {
     email: string;
     firstName: string;
     lastName: string;
     password: string;
-    address: string;
-    promotions: string;
+    billingAddress: string;
+    wantsPromotions: boolean;
     paymentCards: string[];
     watchedMovies: WatchedMovie[];
     country: string;
@@ -24,78 +28,139 @@ interface WatchedMovie {
     rating: number;
 }
 
-const countries = [
-    { value: 'us', label: 'United States' },
-    { value: 'ca', label: 'Canada' },
-    // Add more countries as needed
-];
-
-const languages = [
-    { value: 'en', label: 'English' },
-    { value: 'fr', label: 'French' },
-    // Add more languages as needed
-];
-
-const genders = [
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
-    { value: 'other', label: 'Other' },
-];
-
-const timeZones = [
-    { value: 'PST', label: 'Pacific Standard Time (PST)' },
-    { value: 'MST', label: 'Mountain Standard Time (MST)' },
-    { value: 'CST', label: 'Central Standard Time (CST)' },
-    { value: 'EST', label: 'Eastern Standard Time (EST)' },
-    // Add more time zones as needed
-];
+interface Card {
+    id: number;
+    cardOwnerId: number;
+    cardNumberLastFour: string;
+    expirationDate: string;
+} 
 
 const Profile: React.FC = () => {
     const [user, setUser] = useState<UserProfile | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [newRating, setNewRating] = useState<{ [key: string]: number }>({});
+    const {data: session, status} = useSession();
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [wantsPromotions, setWantsPromotions] = useState(false);
+    const [billingAddress, setBillingAddress] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [cards, setCards] = useState<Card[]>([]);
+    const [cardNumber, setCardNumber] = useState('');
+    const [expirationDate, setExpirationDate] = useState('');
 
+    // Placeholder data for development
+    const placeholderData: UserProfile = {
+        email: "alexarawles@gmail.com",
+        firstName: "Alexa",
+        lastName: "Rawles",
+        password: "hashed-password",
+        billingAddress: "123 Main St, City, State",
+        wantsPromotions: true,
+        paymentCards: ["1234123412341234", "5678567856785678", "9012901290129012"],
+        watchedMovies: [
+            { title: "Inception", rating: 4 },
+            { title: "Titanic", rating: 5 },
+        ],
+        country: "us",
+        gender: "female",
+        language: "en",
+        profilePhoto: "/images/avatar.jpg",
+        timeZone: "PST"
+    };
     useEffect(() => {
-        // Placeholder data for development
-        const placeholderData: UserProfile = {
-            email: "alexarawles@gmail.com",
-            firstName: "Alexa",
-            lastName: "Rawles",
-            password: "hashed-password",
-            address: "123 Main St, City, State",
-            promotions: "Subscribed",
-            paymentCards: ["1234123412341234", "5678567856785678", "9012901290129012"],
-            watchedMovies: [
-                { title: "Inception", rating: 4 },
-                { title: "Titanic", rating: 5 },
-            ],
-            country: "us",
-            gender: "female",
-            language: "en",
-            profilePhoto: "/images/avatar.jpg",
-            timeZone: "PST"
-        };
         setUser(placeholderData); // Simulate fetching data
-    }, []);
+        updateData(session?.user?.email);
+        populateCards();
+    }, [session, status]);
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        if (user) {
-            setUser({ ...user, [name]: value });
+    const updateData = async (email: any) => {
+        const id = await returnUserId(email);
+        const data = await getCustomerData(id);
+        setUser(data);
+        setFirstName(data.first_name);
+        setLastName(data.last_name);
+        setBillingAddress(data.billing_address);
+        setWantsPromotions(data.wants_promotions);
+    }
+
+    const handleSelectChange = async (e: ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const id = await returnUserId(session?.user?.email);
+        const changedEffectively = await changeCustomerData(id, firstName, lastName, wantsPromotions, billingAddress)
+        if (changedEffectively) {
+            setError('')
+            setSuccess('Data Changed Succesfully')
+        } else {
+            setSuccess('')
+            setError('Data was not able to be changed')
         }
     };
 
-    const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        if (user) {
-            setUser({ ...user, [name]: value });
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!cardNumber || !expirationDate) {
+            setSuccess('')
+            setError('Please fill out all the fields')
         }
-    };
+
+        try {
+
+            const userId = await getCustomerAccountId(session?.user?.email)
+
+            const cardTotal = await getTotalCards(userId);
+
+            if (cardTotal < 4) {
+            const response = await addPaymentMethod(userId, cardNumber, expirationDate)
+
+              setError('')
+              setSuccess('Card added succesfully')
+              populateCards();
+            } else {
+                setSuccess('')
+                setError('You have too many cards, please remove one.')
+                return null;
+            }
+        } catch (err) {
+            console.log(err);
+            setError('Something went wrong.')
+        }
+    }
 
     const handleRatingChange = (e: ChangeEvent<HTMLInputElement>, title: string) => {
         const { value } = e.target;
         setNewRating({ ...newRating, [title]: Number(value) });
     };
+
+    const populateCards = async () => {
+        try {
+          const userId = await getCustomerAccountId(session?.user?.email)
+
+            const cardsDataArray = await getPaymentMethods(userId);
+          if (cardsDataArray != null) {
+              setCards(cardsDataArray);
+          }   
+        } catch (err) {
+            console.log(err);
+            setSuccess('')
+            setError('Something went wrong')
+        }
+    }
+
+    const handleDelete = async (cardId: number) => {
+        const response = await handleCardDelete(cardId)
+        if (response) {
+          setError('')
+          setSuccess('Card Deleted Succesfully')
+  
+          populateCards();
+        } else {
+          setSuccess('')
+          setError('Card Could Not Be Deleted')
+        }
+    }
 
     const saveRating = (title: string) => {
         if (user) {
@@ -106,9 +171,9 @@ const Profile: React.FC = () => {
         }
     };
 
-    if (!user) {
+    /*if (!user) {
         return <p>Loading...</p>;
-    }
+    }*/
 
     return (
         <>
@@ -266,7 +331,7 @@ const Profile: React.FC = () => {
                 <div className={styles.profileHeader}>
                     <label htmlFor="profilePhoto">
                         <img
-                            src={user.profilePhoto}
+                            src={"/images/logo.jpg"}
                             alt="User Avatar"
                             className={styles.avatar}
                         />
@@ -281,37 +346,16 @@ const Profile: React.FC = () => {
                     </label>
                     <div>
                         <h2 className={styles.name}>
-                            {editMode ? (
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={user.firstName}
-                                    onChange={handleInputChange}
-                                />
-                            ) : (
-                                user.firstName
+                            {(
+                                firstName
                             )}{" "}
-                            {editMode ? (
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={user.lastName}
-                                    onChange={handleInputChange}
-                                />
-                            ) : (
-                                user.lastName
+                            {(
+                                lastName
                             )}
                         </h2>
                         <p className={styles.email}>
-                            {editMode ? (
-                                <input
-                                    type="text"
-                                    name="email"
-                                    value={user.email}
-                                    onChange={handleInputChange}
-                                />
-                            ) : (
-                                user.email
+                            {(
+                                user?.email
                             )}
                         </p>
                     </div>
@@ -325,136 +369,87 @@ const Profile: React.FC = () => {
 
                 <div className={styles.formSection}>
                     <div className={styles.inputGroup}>
-                        <label>Full Name</label>
-                        <input
-                            type="text"
-                            name="fullName"
-                            value={`${user.firstName} ${user.lastName}`}
-                            onChange={handleInputChange}
-                            readOnly={!editMode}
-                        />
-                    </div>
-                    <div className={styles.inputGroup}>
+                <form onSubmit={handleSelectChange}>
+                {editMode ? (
+                <input
+                    type="text"
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    
+                />) : ("")}
+                {editMode ? (
+                <input
+                    type="text"
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    
+                />) :("")}
+                {editMode ? (
+                <input
+                    type="text"
+                    placeholder="Billing Address"
+                    value={billingAddress}
+                    onChange={(e) => setBillingAddress(e.target.value)}
+                    
+                />) :("")}
+                {editMode ? (
+                <label>
+                    <p>Wants Promotions</p>
+                    <input
+                        type="checkbox"
+                        checked={wantsPromotions}
+                        onChange={(e) => setWantsPromotions(e.target.checked)}
+                    />
+                </label>) :("")}
+                </form>
+                <div className={styles.inputGroup}>
                         <label>Payment Methods</label>
                         <ul>
-                            {user.paymentCards.map((card, index) => (
-                                <li key={index}>
-                                    {card}
-                                    {editMode && (
-                                        <button onClick={() => {}}>
-                                            Delete
-                                        </button>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
+                    {cards.map(card => (
+                        <li key={card.id}>
+                            Card Number: **** **** **** {card.cardNumberLastFour}, Expiration Date: {card.expirationDate}
+                            {editMode ? (
+                            <button onClick={() => handleDelete(card.id)}>Delete</button>
+                            ) :("")}
+                        </li>
+                    ))}
+             </ul>
                         {editMode && (
-                            <div className={styles.addCardSection}>
-                                <input
-                                    type="text"
-                                    value=""
-                                    onChange={() => {}}
-                                    placeholder="Add new card"
-                                />
-                                <button onClick={() => {}}>Add Card</button>
-                            </div>
+                            <form onSubmit={handleSubmit}>
+                            <input
+                                type="text"
+                                placeholder="Card Number"
+                                value={cardNumber}
+                                onChange={(e) => setCardNumber(e.target.value)}
+                                
+                            />
+                            <input
+                                type="date"
+                                placeholder="Expiration Date"
+                                value={expirationDate}
+                                onChange={(e) => setExpirationDate(e.target.value)}
+                                
+                            />
+                            <button type="submit">Add Payment Option</button>
+                            </form>
                         )}
                     </div>
-                    <div className={styles.inputGroup}>
-                        <label>Gender</label>
-                        <select
-                            name="gender"
-                            value={user.gender}
-                            onChange={handleSelectChange}
-                            disabled={!editMode}
-                        >
-                            {genders.map((gender) => (
-                                <option key={gender.value} value={gender.value}>
-                                    {gender.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>Country</label>
-                        <select
-                            name="country"
-                            value={user.country}
-                            onChange={handleSelectChange}
-                            disabled={!editMode}
-                        >
-                            {countries.map((country) => (
-                                <option key={country.value} value={country.value}>
-                                    {country.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>Language</label>
-                        <select
-                            name="language"
-                            value={user.language}
-                            onChange={handleSelectChange}
-                            disabled={!editMode}
-                        >
-                            {languages.map((language) => (
-                                <option key={language.value} value={language.value}>
-                                    {language.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>Time Zone</label>
-                        <select
-                            name="timeZone"
-                            value={user.timeZone}
-                            onChange={handleSelectChange}
-                            disabled={!editMode}
-                        >
-                            {timeZones.map((timeZone) => (
-                                <option key={timeZone.value} value={timeZone.value}>
-                                    {timeZone.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                {success && <p style={{ color: 'green' }}>{success}</p>}
                 </div>
+        </div>
 
                 <div className={styles.emailSection}>
                     <h3>My email Address</h3>
                     <div className={styles.emailItem}>
-                        <input type="checkbox" checked readOnly />
-                        <p>{user.email}</p>
-                        <span>1 month ago</span>
+                        <p>{user?.email}</p>
                     </div>
-                    <button className={styles.addEmailButton}>+ Add Email Address</button>
                 </div>
 
                 <div className={styles.moviesSection}>
                     <h3>Watched Movies</h3>
-                    {user.watchedMovies.map((movie, index) => (
-                        <div key={index} className={`${styles.movieItem} movieItem`}>
-                            <p>{movie.title}</p>
-                            <div className="star-rating">
-                                {[5, 4, 3, 2, 1].map((star) => (
-                                    <React.Fragment key={star}>
-                                        <input
-                                            type="radio"
-                                            id={`${movie.title}-${star}`}
-                                            name={`${movie.title}-rating`}
-                                            value={star}
-                                            checked={newRating[movie.title] === star}
-                                            onChange={(e) => handleRatingChange(e, movie.title)}
-                                        />
-                                        <label htmlFor={`${movie.title}-${star}`}>&#9733;</label>
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                            <button onClick={() => saveRating(movie.title)}>Save Rating</button>
-                        </div>
-                    ))}
                 </div>
             </div>
         </>
