@@ -61,7 +61,6 @@ export default function ScheduleMovies() {
     
             const moviesArray = moviesData.data as Movie[];
             setMovies(moviesArray); // Set the fetched movies data
-            setSuccess("Movies loaded");
             //console.log('movies: ', moviesArray);
         } catch (error) {
             console.log(error)

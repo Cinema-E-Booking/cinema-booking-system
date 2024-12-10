@@ -64,3 +64,43 @@ export async function getMovie (movieId: number) {
 
     return null;
 }
+
+export async function getScreenings(movieId: number) {
+    try {
+        const response = await fetch('./api/getScreenings', {
+            method: 'POST',
+            body: JSON.stringify({
+              movieId: movieId,
+            }),
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const screenResponse = await response.json();
+          const screenData = await screenResponse.response;
+
+          return screenData;
+    } catch (err) {
+        console.log(err)
+    }
+
+    return null;
+}
+
+export async function getScreening(screeningId: number) {
+    try {
+        const response = await fetch('./api/getScreening', {
+            method: 'POST',
+            body: JSON.stringify({
+              screeningId: screeningId,
+            }),
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const screenResponse = await response.json();
+          const screenData = await screenResponse.response;
+
+          return screenData;
+    } catch (err) {
+        console.log(err)
+    }
+
+    return null;
+}

@@ -1,11 +1,13 @@
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { getMovie, getScreenings } from "../lib/api_references/movies"
+import { useSession } from "next-auth/react";
 
 export default function BookingPage() {
   const [title, setTitle] = useState('');
-  const [isUpdated, setUpdated] = useState(false);
   const [screenings, setScreenings] = useState<Screening[]>([]);
+  const { data: session, status } = useSession();
 
   interface Screening {
     id: number;
@@ -42,28 +44,22 @@ export default function BookingPage() {
   const data = router.query;
 
   useEffect(() => {
-    const fetchMovie = async () => {
-      const response = await fetch(`/api/getMovie?id=${Number(data.id)}`);
-      const result = await response.json();
-      setTitle(result.result.title);
-      getShowTime(result.result.movieId);
-    };
+    fetchMovie(Number(data.id));
+    getShowTime(Number(data.id));
+  }, [session, status]);
 
-    fetchMovie();
-  }, [isUpdated]);
+  const fetchMovie = async (movieId: number) => {
+    const result = await getMovie(movieId)
+    console.log("Movie Data: ", result)
+    setTitle(result.title);
+    getShowTime(result.result.movieId);
+  };
 
   const getShowTime = async (movieId: number) => {
     try {
-      const response = await fetch('./api/getScreenings', {
-        method: 'POST',
-        body: JSON.stringify({
-          movieId: movieId,
-        }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const screeningsData = await response.json();
-      setScreenings(screeningsData.response);
-      setUpdated(true);
+      const screenData = await getScreenings(movieId)
+      console.log("Screen Data: ", screenData)
+      setScreenings(screenData);
     } catch (error) {
       console.log(error);
     }
@@ -184,15 +180,19 @@ export default function BookingPage() {
               <div key={screening.id} className="showtime">
                 <h3>Auditorium: {screening.auditorium?.name || "loading"}</h3>
                 <p>
-                  <strong>Start Time:</strong> {screening.startTime.toLocaleString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    hour12: true,
-                  }) || "loading"}
+                  <strong>Start Time:</strong> { 
+                  (() => {
+                    const startTime = new Date(screening.startTime);    
+                    return startTime.toLocaleString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    });
+                  })() || "loading"}
                 </p>
               </div>
             ))

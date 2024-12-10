@@ -79,11 +79,9 @@ export default function AdminProfile() {
 
   const loadUsers = async () => {
     const customers = await returnAllCustomers()
-    console.log("Customers: ", customers)
     setUsers(customers);
 
     const admins = await returnAllAdmins()
-    console.log("Admins: ", admins)
     setAdmins(admins);
   }
 

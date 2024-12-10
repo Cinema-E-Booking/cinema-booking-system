@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Script from "next/script";
-import { getMovie } from "../lib/api_references/movies"
+import { getMovie, getScreenings } from "../lib/api_references/movies"
 
 const MoviePage = () => {
     const [title, setTitle] = useState('Mock Movie Title');
@@ -37,14 +37,12 @@ const MoviePage = () => {
     const data = router.query;
 
     useEffect(() => {
-        const result = fetchMovie();     
+        fetchMovie(Number(data.id));
+        getShowTime(Number(data.id));     
     }, [session, status]);
 
-    const fetchMovie = async () => {
-        console.log("The DATA is: ", data)
-        console.log("The ID is: ", data.id)
-        const result = await getMovie(Number(data.id)) 
-        console.log("The result is:", result)
+    const fetchMovie = async (movieId: number) => {
+        const result = await getMovie(movieId) 
         setTitle(result.title);
         setRating(result.rating);
         setDuration(`${result.duration.hours} Hours and ${result.duration.minutes} Minutes`);
@@ -56,21 +54,27 @@ const MoviePage = () => {
         setProducer(result.producer);
         setActors(result.actors);
         setMovieId(result.movieId);
-        //console.log('Result: ', result);
-        //console.log('Result.result: ', result.result);
-        //console.log('MovieId: ', result.result.movieId);
-        //getShowTime(result.movieId);
 
         return result;
     }
 
-    const goToBookingPage = (movieId: string) => {
-        const id: number = parseInt(movieId, 10);
+    const goToSeatsPage = (screening: number) => {
+        const movieIntId = data.id;
+        const showId = screening;
         router.push({
-            pathname: '/booking',
-            query: { id },
+            pathname: '/seats',
+            query: { movieIntId, showId },
         });
     };
+
+    const getShowTime = async (movieId: number) => {
+        try {
+          const screenData = await getScreenings(movieId)
+          setScreenings(screenData);
+        } catch (error) {
+          console.log(error);
+        }
+      };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
@@ -336,9 +340,6 @@ const MoviePage = () => {
 
             <div className="movie-page">
                 <div className="movie-title">{title}</div>
-                <div className="movie-actions">
-                    <button onClick={() => goToBookingPage(movieId)}>Watch</button>
-                </div>
                 <div className="left-column">
                     {image_url && <img src={image_url} alt={title} className="movie-poster" />}
                 </div>
@@ -359,16 +360,23 @@ const MoviePage = () => {
                             {screenings.map(screening => (
                                 <li key={screening.id}>
                                     <p>Auditorium: {screening.auditorium?.name || "loading"}</p>
-                                    <p>Start Time: {screening.startTime.toLocaleString('en-US', {
-                                        weekday: 'long',
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric',
-                                        hour: 'numeric',
-                                        minute: 'numeric',
-                                        hour12: true,
-                                    }) || "loading"}</p>
-                                    <p>Format: 2D, REALD 3D, IMAX, 4DX, RPX</p>
+                                    <p>Start Time: {
+                                    (() => {
+                                        const startTime = new Date(screening.startTime);    
+                                        return startTime.toLocaleString('en-US', {
+                                          weekday: 'long',
+                                          year: 'numeric',
+                                          month: 'long',
+                                          day: 'numeric',
+                                          hour: 'numeric',
+                                          minute: 'numeric',
+                                          hour12: true,
+                                        });
+                                      })() || "loading"}
+                                        <div className="movie-actions">
+                                            <button onClick={() => goToSeatsPage(screening.id)}>Watch</button>
+                                        </div>
+                                    </p>
                                 </li>
                             ))}
                         </ul>
