@@ -101,24 +101,28 @@ export default function AdminProfile() {
         <nav>
           <ul>
             <li>
-              <Link href="/">Home Page</Link>
+              <Link href="/" style={{ color: "#fff", textDecoration: "underline" }}>Home Page</Link>
             </li>
             <li>
-              <Link href="/manage-movies">Manage Movies</Link>
+              <Link href="/manage-movies" style={{ color: "#fff", textDecoration: "underline" }}>Manage Movies</Link>
             </li>
             <li>
-              <Link href="/manage-promotions">Manage Promotions</Link>
+              <Link href="/manage-promotions" style={{ color: "#fff", textDecoration: "underline" }}>Manage Promotions</Link>
             </li>
             <li>
-              <Link href="/admin">Profile</Link>
+              <Link href="/manage-showrooms" style={{ color: "#fff", textDecoration: "underline" }}>Manage Showrooms</Link>
+            </li>
+            <li>
+              <Link href="/admin" style={{ color: "#fff", textDecoration: "underline" }}>Profile</Link>
             </li>
           </ul>
         </nav>
       </header>
 
-      {/* Main Content */}
       <main className="main-content">
+        {/*
         <div className="half-screen profile-container">
+          
           <section className="profile-header">
             <div className="profile-name">{profile.name}</div>
             <div className="logout-icons">
@@ -127,7 +131,7 @@ export default function AdminProfile() {
             </div>
           </section>
 
-          {/* Profile Picture Section */}
+          {/* Profile Picture Section 
           <section className="profile-picture-section">
             <img
               src={profile.profilePicture}
@@ -146,7 +150,7 @@ export default function AdminProfile() {
             <button className="delete-btn">Delete Profile Picture</button>
           </section>
 
-          {/* Profile Info Section */}
+           Profile Info Section
           <section className="profile-info">
             <h2>Admin Profile</h2>
             <div className="profile-details">
@@ -226,17 +230,18 @@ export default function AdminProfile() {
                 disabled={!editMode}
               />
             </div>
-          </section>
+          </section> 
 
-          {/* Save Changes Button */}
+          {/* Save Changes Button }
           <button className="save-btn" onClick={() => setEditMode(!editMode)}>
             {editMode ? "Save Changes" : "Edit Profile"}
           </button>
-        </div>
+  */}
 
         {/* Existing Users Box */}
-        <div className="half-screen users-box">
+        <div className="half-screen profile-container">
           <h2>Existing Users</h2>
+          {/*
           <div className="add-user-form">
             <input
               type="text"
@@ -258,6 +263,7 @@ export default function AdminProfile() {
               Add User
             </button>
           </div>
+*/}
           <table className="admin-table">
             <thead>
               <tr>
