@@ -110,35 +110,7 @@ export async function getBooking(bookingId: number): Promise<Booking> {
 export async function calculateBookingPrice(bookingId: number) {
   const booking = await getBooking(bookingId);
 
-  let basePrice = 0;
-  for (const ticket of booking.tickets) {
-    switch (ticket.ticketType) {
-      case "adult":
-        basePrice += TICKET_PRICE_ADULT;
-        break;
-      case "senior":
-        basePrice += TICKET_PRICE_SENIOR;
-        break;
-      case "child":
-        basePrice += TICKET_PRICE_CHILD;
-        break;
-    };
-  }
-
-  if (booking.promotionCode === undefined) {
-    return basePrice;
-  }
-
-  const promotion = await getPromotion(booking.promotionCode);
-  if (
-    promotion === null ||
-    promotion.endTime.getTime() > Date.now()
-  ) {
-    return basePrice;
-  }
-
-  const percentOff = promotion.percentOff;
-  return basePrice * (100-percentOff)/100;
+  return await calculateTicketsPrice(booking.tickets, booking.promotionCode);
 };
 
 export async function getCustomerBookingHistory(customerId: number) {
@@ -160,4 +132,36 @@ export async function getCustomerBookingHistory(customerId: number) {
   }
 
   return bookings;
+};
+
+export async function calculateTicketsPrice(tickets: CreateTicketOpts[], promotionCode?: string) {
+  let basePrice = 0;
+  for (const ticket of tickets) {
+    switch (ticket.ticketType) {
+      case "adult":
+        basePrice += TICKET_PRICE_ADULT;
+        break;
+      case "senior":
+        basePrice += TICKET_PRICE_SENIOR;
+        break;
+      case "child":
+        basePrice += TICKET_PRICE_CHILD;
+        break;
+    };
+  }
+
+  if (promotionCode === undefined) {
+    return basePrice;
+  }
+
+  const promotion = await getPromotion(promotionCode);
+  if (
+    promotion === null ||
+    promotion.endTime.getTime() > Date.now()
+  ) {
+    return basePrice;
+  }
+
+  const percentOff = promotion.percentOff;
+  return basePrice * (100-percentOff)/100;
 };

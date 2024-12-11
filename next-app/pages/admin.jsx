@@ -113,7 +113,7 @@ export default function AdminProfile() {
               <Link href="/manage-showrooms" style={{ color: "#fff", textDecoration: "underline" }}>Manage Showrooms</Link>
             </li>
             <li>
-              <Link href="/admin" style={{ color: "#fff", textDecoration: "underline" }}>Profile</Link>
+              <Link href="/schedule-movies" style={{ color: "#fff", textDecoration: "underline" }}>Schedule Movies</Link>
             </li>
           </ul>
         </nav>

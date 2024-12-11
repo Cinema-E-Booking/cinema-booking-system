@@ -34,6 +34,21 @@ interface Card {
     cardNumberLastFour: string;
     expirationDate: string;
 } 
+type TicketType = "adult" | "senior" | "child";
+interface Ticket {
+    id: number;
+    screeningId: number;
+    seatId: number;
+    bookingId: number;
+    ticketType: TicketType;
+  };
+
+interface Booking {
+    id: number,
+    customerId: number,
+    tickets: Ticket[];
+    promotionCode: string;
+}
 
 const Profile: React.FC = () => {
     const [user, setUser] = useState<UserProfile | null>(null);
@@ -49,6 +64,7 @@ const Profile: React.FC = () => {
     const [cards, setCards] = useState<Card[]>([]);
     const [cardNumber, setCardNumber] = useState('');
     const [expirationDate, setExpirationDate] = useState('');
+    const [bookings, setBookings] = useState<Booking[]>([]);
 
     // Placeholder data for development
     const placeholderData: UserProfile = {
@@ -73,6 +89,7 @@ const Profile: React.FC = () => {
         setUser(placeholderData); // Simulate fetching data
         updateData(session?.user?.email);
         populateCards();
+        getBookings();
     }, [session, status]);
 
     const updateData = async (email: any) => {
@@ -170,6 +187,20 @@ const Profile: React.FC = () => {
             setUser({ ...user, watchedMovies: updatedMovies });
         }
     };
+
+    const getBookings = async () => {
+        const userId = await getCustomerAccountId(session?.user?.email)
+        const response = await fetch(`/api/getBookings`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: userId }),
+          });
+          const Data = await response.json();
+
+          setBookings(Data.data);
+    }
 
     /*if (!user) {
         return <p>Loading...</p>;
@@ -450,6 +481,11 @@ const Profile: React.FC = () => {
 
                 <div className={styles.moviesSection}>
                     <h3>Watched Movies</h3>
+                    {bookings.map(booking => (
+                        <li key={booking.id}>
+                            Booking: {booking.id}
+                        </li>
+                    ))}
                 </div>
             </div>
         </>
