@@ -24,6 +24,13 @@ END $$;
 
 
 DO $$ BEGIN
+  CREATE TYPE seat_status AS enum ('occupied', 'available');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+
+DO $$ BEGIN
   CREATE TYPE film_rating AS enum ('nr', 'g', 'pg', 'pg-13', 'r', 'nc-17');
 EXCEPTION
   WHEN duplicate_object THEN NULL;
@@ -189,6 +196,9 @@ CREATE TABLE IF NOT EXISTS seat (
   number INT NOT NULL,
   auditorium_id INT NOT NULL REFERENCES auditorium(id) ON DELETE CASCADE
 );
+
+ALTER TABLE seat
+  ADD COLUMN IF NOT EXISTS status seat_status NOT NULL DEFAULT 'available';
 
 CREATE TABLE IF NOT EXISTS screening (
   id SERIAL PRIMARY KEY,

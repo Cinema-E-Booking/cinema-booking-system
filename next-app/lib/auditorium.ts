@@ -1,6 +1,8 @@
 import { query } from "./database";
 import { getMovie, Movie } from "./movie";
 
+export type SeatStatus = "Occupied" | "Available";
+
 export interface Auditorium {
   id: number;
   name: string;
@@ -11,6 +13,7 @@ export interface Seat {
   id: number;
   row: number;
   number: number;
+  status: SeatStatus;
 };
 
 export interface Screening {
@@ -26,6 +29,7 @@ export interface CreateAuditoriumOpts {
   seats: {
     row: number;
     number: number;
+    status: SeatStatus;
   }[]
 };
 export async function createAuditorium(opts: CreateAuditoriumOpts) {
@@ -90,6 +94,7 @@ export async function getAuditorium(auditoriumId: number): Promise<Auditorium> {
       id: row.id,
       row: row.row,
       number: row.number,
+      status: row.status,
     });
   }
 
@@ -137,7 +142,7 @@ export async function createScreening(opts: CreateScreeningOpts) {
 async function getAvailableSeats(screeningId: number, auditoriumId: number): Promise<Seat[]> {
   const queryText = `
     SELECT
-      id, row, number
+      id, row, number, status
     FROM seat
     WHERE auditorium_id = $1
     AND id NOT IN (
@@ -156,6 +161,7 @@ async function getAvailableSeats(screeningId: number, auditoriumId: number): Pro
       id: row.id,
       row: row.row,
       number: row.number,
+      status: row.status,
     });
   }
 
