@@ -79,3 +79,22 @@ export async function handleCardDelete (cardId: number) {
 
     return null;
 }
+
+export async function createPromotion (newPromotion: any) {
+    try {
+        const response = await fetch('/api/newPromotion', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newPromotion),
+        });
+
+        return response;
+    } catch (err) {
+        console.log(err)
+    }
+
+    return null;
+}

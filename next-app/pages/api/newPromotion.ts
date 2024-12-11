@@ -8,9 +8,9 @@ export default async function handler(
 
     const {code, percentOff, endTime} = req.body;
     const opts: CreatePromotionOpts = {
-        code,
-        percentOff,
-        endTime
+        code: code,
+        percentOff: percentOff,
+        endTime: endTime
     }
 
     try {

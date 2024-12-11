@@ -1,13 +1,14 @@
 import Head from "next/head";
 import React, { useState, useEffect } from 'react';
+import { useSession } from "next-auth/react";
 
 // Define the type for promotions
 interface Promotion {
-    promoTitle: string;
+    code: string;
     promoDesc: string;
-    discount: string;
+    percent_off: string;
     startDate: string;
-    endDate: string;
+    endTime: string;
 }
 
 const ManagePromotions = () => {
@@ -19,25 +20,28 @@ const ManagePromotions = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [promotions, setPromotions] = useState<Promotion[]>([]); // Set the correct type for promotions
+    const { data: session, status } = useSession();
 
     useEffect(() => {
-        const fetchPromotions = async () => {
-            try {
-                const response = await fetch("/api/allPromotions");
-                const result = await response.json();
-
-                if (result.data && Array.isArray(result.data.promotions)) {
-                    setPromotions(result.data.promotions);
-                    setSuccess("Promotions loaded");
-                } else {
-                    setError("Failed to load promotions.");
-                }
-            } catch (error) {
-                setError("An error occurred while fetching promotions.");
-            }
-        };
         fetchPromotions();
-    }, []);
+    }, [session, status]);
+
+    const fetchPromotions = async () => {
+        try {
+            const response = await fetch("/api/allPromotions");
+            const result = await response.json();
+
+            if (result.data && Array.isArray(result.data)) {
+                console.log("Promotions: ",result.data)
+                setPromotions(result.data);
+                setSuccess("Promotions loaded");
+            } else {
+                setError("Failed to load promotions.");
+            }
+        } catch (error) {
+            setError("An error occurred while fetching promotions.");
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,11 +54,11 @@ const ManagePromotions = () => {
         }
 
         const newPromotion: Promotion = {
-            promoTitle,
+            code: promoTitle,
             promoDesc,
-            discount,
+            percent_off: discount,
             startDate,
-            endDate,
+            endTime: endDate,
         };
 
         try {
@@ -64,7 +68,7 @@ const ManagePromotions = () => {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(newPromotion),
+                body: JSON.stringify({code: newPromotion.code, percentOff: newPromotion.percent_off, endTime: newPromotion.endTime}),
             });
 
             if (!response.ok) {
@@ -155,17 +159,30 @@ const ManagePromotions = () => {
                 {promotions.length > 0 ? (
                     promotions.map((promotion, index) => (
                         <div className="promo-card" key={index}>
-                            <img src="/images/promo.jpg" alt="Promo Image" />
-                            <div className="promo-info">
-                                <h3>{promotion.promoTitle}</h3>
-                                <p>{promotion.promoDesc}</p>
-                                <p><strong>Start Date:</strong> {promotion.startDate} | <strong>End Date:</strong> {promotion.endDate}</p>
-                                <div className="actions">
-                                    <button>Edit</button>
-                                    <button>Delete</button>
-                                </div>
-                            </div>
-                        </div>
+    <img src="/images/promo.jpg" alt="Promo Image" />
+    <div className="promo-info">
+        <h3>{promotion.code}</h3>
+        <p>{promotion.promoDesc}</p>
+        <p>
+            <strong>
+                End Date: {(() => {
+                    const endTime = new Date(promotion.endTime); // Assuming 'promotion.endDate' holds the actual end date.
+                    return endTime.toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                    });
+                })()}
+            </strong>
+        </p>
+        <div className="actions">
+            <button>Edit</button>
+            <button>Delete</button>
+        </div>
+    </div>
+</div>
+
                     ))
                 ) : (
                     <p>No promotions available.</p>

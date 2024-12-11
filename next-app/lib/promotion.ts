@@ -47,18 +47,22 @@ export async function getAllPromotions() {
   `;
 
   const res = await query(queryText);
-  console.log('Databse response:', res);
-  console.log('row Count:', res.rowCount);  
+  //console.log('Databse response:', res);
+  //console.log('row Count:', res.rowCount);  
 
   if(res.rowCount == 0) {
       return null; // no movies found
   }
 
-  const data = {
-    rowCount: res.rowCount,
-    promotions : res.rows.map((row) => Object.values(row)),
-  };
-  console.log(data.promotions);
+  const data: Promotion[] = [];
+  for (const row of res.rows) {
+    data.push({
+      code: row.code,
+      percentOff: row.percentOff,
+      endTime: row.end_time,
+      editable: row.editable
+    });
+  }
 
   return data;
 }

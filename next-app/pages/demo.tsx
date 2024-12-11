@@ -1,5 +1,6 @@
 import Head from "next/head"
 import { newMovie } from "../lib/api_references/movies"
+import { createPromotion } from "../lib/api_references/payments"
 
 export default function demo() {
 
@@ -255,8 +256,56 @@ export default function demo() {
         })
     }
 
-    const createPromotion = async () => {
-        
+    interface Promotion {
+        promoTitle: string;
+        promoDesc: string;
+        discount: string;
+        startDate: string;
+        endDate: string;
+    }
+
+    const Promotion1: Promotion = {
+        promoTitle: "Saver Combo",
+        promoDesc: "Save 20% on Fridays",
+        discount: "20",
+        startDate: "2024-12-0T10:30:00.000Z",
+        endDate: "2024-12-25T10:30:00.000Z",
+    };
+
+    const Promotion2: Promotion = {
+        promoTitle: "Double Rewards",
+        promoDesc: "Save 50% on Movies",
+        discount: "50",
+        startDate: "2024-12-5T10:30:00.000Z",
+        endDate: "2024-12-28T10:30:00.000Z",
+    };
+
+    const Promotion3: Promotion = {
+        promoTitle: "Family Movie Night",
+        promoDesc: "Save 25%",
+        discount: "25",
+        startDate: "2024-12-10T10:30:00.000Z",
+        endDate: "2024-12-31T10:30:00.000Z",
+    };
+
+    const createNewPromotion = async (newPromotion: Promotion) => {
+        try {
+        const response = await fetch('/api/newPromotion', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({code: newPromotion.promoTitle, percentOff: newPromotion.discount, endTime: newPromotion.endDate}),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     const createData = async () => {
@@ -271,6 +320,11 @@ export default function demo() {
         createShowRoom(showRoom1);
         createShowRoom(showRoom2);
         createShowRoom(showRoom3);
+
+        createNewPromotion(Promotion1);
+        createNewPromotion(Promotion2);
+        createNewPromotion(Promotion3);
+
 
         return null;
     }

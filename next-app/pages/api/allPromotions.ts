@@ -9,8 +9,8 @@ export default async function handler(
 
     try {
         const data = await getAllPromotions();
-        console.log(data);
-        console.log('allPromotions Check:', data);
+        //console.log(data);
+        //console.log('allPromotions Check:', data);
 
 
         res.status(200).json({ data });
