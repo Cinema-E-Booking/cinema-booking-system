@@ -21,7 +21,7 @@ export async function createPromotion(opts: CreatePromotionOpts) {
   return res.rows[0].code as string;
 }
 
-export async function getPromotion(code: Promotion): Promise<Promotion | null> {
+export async function getPromotion(code: string): Promise<Promotion | null> {
   const queryText = `
     SELECT
       code, percent_off, start_time, editable
