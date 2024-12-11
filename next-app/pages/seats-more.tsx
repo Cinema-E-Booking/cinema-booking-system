@@ -15,6 +15,7 @@ const SeatsPage = () => {
   const [rowFive, setRowFive] = useState([]);
   const [rowSix, setRowSix] = useState([]);
   const rows = [rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix];
+  const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
   
 
   interface Screening {
@@ -50,6 +51,8 @@ interface Seat {
 
   const router = useRouter();
   const data = router.query;
+  console.log('data check: ', data);
+  console.log('query check: ', router.query);
 
   useEffect(() => {
     const fetchScreening = async () => {
@@ -112,15 +115,25 @@ interface Seat {
       divideRows();
   }, [seats]);
 
-  useEffect(() => {
-    console.log('row one: ', rowOne);
-    console.log('row 2: ', rowTwo);
-    console.log('row 3: ', rowThree);
-    console.log('row 4: ', rowFour);
-    console.log('row 5: ', rowFive);
-    console.log('row 6: ', rowSix);
-    console.log('rows: ', rows);
-  }, [rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, rows]);
+//  useEffect(() => {
+//    console.log('row one: ', rowOne);
+//    console.log('row 2: ', rowTwo);
+//    console.log('row 3: ', rowThree);
+//    console.log('row 4: ', rowFour);
+//    console.log('row 5: ', rowFive);
+//    console.log('row 6: ', rowSix);
+//    console.log('rows: ', rows);
+//  }, [rowOne, rowTwo, rowThree, rowFour, rowFive, rowSix, rows]);
+
+  const handleSeatClick = (seatId : number) => {
+    console.log('seat click check: ', seatId);
+    console.log('selected seats: ', selectedSeats);
+    setSelectedSeats((prevSelected) => 
+      prevSelected.includes(seatId)
+        ? prevSelected.filter((id) => id !== seatId)
+        : [...prevSelected, seatId]
+    );
+  };
   
 
   return (
@@ -136,41 +149,110 @@ interface Seat {
             <div className={styles.screen}>SCREEN</div>
             <div className={styles.seatinggrid}>
               <div className={styles.row}>
-                {rowOne.map((row) => (
-                  <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                {rowOne.map((seat) => (
+                  <div
+                    key={seat['id']}
+                    className={[
+                      styles.seat,
+                      seat['status'] === "occupied" ? styles.setoccupied : "",
+                      selectedSeats.includes(seat['id']) ? styles.seatselected : "",
+                    ].join(" ")}
+                    onClick={() =>
+                      seat['status'] !== "occupied" && handleSeatClick(seat['id'])
+                    }
+                  />
                 ))}
               </div>
               <div className={styles.row}>
-                {rowTwo.map((row) => (
-                  <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                {rowTwo.map((seat) => (
+                  <div
+                    key={seat['id']}
+                    className={[
+                      styles.seat,
+                      seat['status'] === "occupied" ? styles.setoccupied : "",
+                      selectedSeats.includes(seat['id']) ? styles.seatselected : "",
+                    ].join(" ")}
+                    onClick={() =>
+                      seat['status'] !== "occupied" && handleSeatClick(seat['id'])
+                    }
+                  />
                 ))}
               </div>
               <div className={styles.row}>
-                {rowThree.map((row) => (
-                  <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                {rowThree.map((seat) => (
+                  <div
+                    key={seat['id']}
+                    className={[
+                      styles.seat,
+                      seat['status'] === "occupied" ? styles.setoccupied : "",
+                      selectedSeats.includes(seat['id']) ? styles.seatselected : "",
+                    ].join(" ")}
+                    onClick={() =>
+                      seat['status'] !== "occupied" && handleSeatClick(seat['id'])
+                    }
+                  />
                 ))}
               </div>
               <div className={styles.row}>
-                {rowFour.map((row) => (
-                  <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                {rowFour.map((seat) => (
+                  <div
+                    key={seat['id']}
+                    className={[
+                      styles.seat,
+                      seat['status'] === "occupied" ? styles.setoccupied : "",
+                      selectedSeats.includes(seat['id']) ? styles.seatselected : "",
+                    ].join(" ")}
+                    onClick={() =>
+                      seat['status'] !== "occupied" && handleSeatClick(seat['id'])
+                    }
+                  />
                 ))}
               </div>
               <div className={styles.row}>
-                {rowFive.map((row) => (
-                  <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                {rowFive.map((seat) => (
+                  <div
+                    key={seat['id']}
+                    className={[
+                      styles.seat,
+                      seat['status'] === "occupied" ? styles.setoccupied : "",
+                      selectedSeats.includes(seat['id']) ? styles.seatselected : "",
+                    ].join(" ")}
+                    onClick={() =>
+                      seat['status'] !== "occupied" && handleSeatClick(seat['id'])
+                    }
+                  />
                 ))}
               </div>
               <div className={styles.row}>
-                {rowSix.map((row) => (
-                  <div className={[styles.seat, styles.seatavailable].join(" ")} />
+                {rowSix.map((seat) => (
+                  <div
+                    key={seat['id']}
+                    className={[
+                      styles.seat,
+                      seat['status'] === "occupied" ? styles.setoccupied : "",
+                      selectedSeats.includes(seat['id']) ? styles.seatselected : "",
+                    ].join(" ")}
+                    onClick={() =>
+                      seat['status'] !== "occupied" && handleSeatClick(seat['id'])
+                    }
+                  />
                 ))}
               </div>
             </div>
-            <div className={styles.legend}>
-            <span className={styles.availablelegend}>Available</span>
-            <span className={styles.selectedlegend}>Selected</span>
-            <span className={styles.occupiedlegend}>Occupied</span>
-            </div>
+
+          <div className={styles.legend}>
+          <span>
+            <div className={styles.seat}></div> Available
+          </span>
+          <span>
+            <div className={[styles.seat, styles.seatselected].join(" ")}></div>{" "}
+            Selected
+          </span>
+          <span>
+            <div className={[styles.seat, styles.seatoccupied].join(" ")}></div>{" "}
+            Occupied
+          </span>
+        </div>
             <button id="confirm-seats">Confirm Selection</button>
         </main>
     </>
