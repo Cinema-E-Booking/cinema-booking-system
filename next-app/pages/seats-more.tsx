@@ -137,10 +137,11 @@ interface Seat {
 
   const goToCheckout = () => {
     //const ticketSeats = selectedSeats;
+    const movieId = data.movieId;
     const showId = data.showId;
     router.push({
         pathname: '/newCheckout',
-        query: {showId, selectedSeats},
+        query: {showId, selectedSeats, movieId},
         //query: { movieIntId, showId },
     });
   };

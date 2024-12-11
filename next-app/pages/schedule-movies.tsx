@@ -174,6 +174,7 @@ export default function ScheduleMovies() {
     <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title> Movies </title>
+        <a href="admin" style={{ color: "#fff", textDecoration: "underline" }}></a>
     </Head>
     <div className="container">
         <div>

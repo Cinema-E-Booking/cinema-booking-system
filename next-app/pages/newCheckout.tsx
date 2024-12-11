@@ -101,19 +101,19 @@ const useSeats = (screeningId: number) => {
   }, [screeningId]);
 
   const selectSeat = useCallback((seatId: number) => {
-    console.log("selected", selectedSeats);
-    console.log("available", availableSeats);
+    //console.log("selected", selectedSeats);
+    //console.log("available", availableSeats);
     const seat = availableSeats.find(s => s.id === seatId);
-    console.log("seat", seat)
+    //console.log("seat", seat)
     if (seat === undefined) return;
 
 
     const alreadySelected = selectedSeats.some(s => s.id === seatId);
-    console.log("alreadySelected", alreadySelected);
+    //console.log("alreadySelected", alreadySelected);
     if (alreadySelected) return;
 
 
-    console.log("new selected", [...selectedSeats, seat]);
+    //console.log("new selected", [...selectedSeats, seat]);
     setSelectedSeats(sel => [...sel, seat]);
   }, [selectedSeats, availableSeats]);
 
@@ -259,8 +259,13 @@ const useCheckout = () => {
   };
 
   const finalizeBooking = useCallback(() => {
+    const movieId = router.query.movieId;
+    const showId = router.query.showId;
     createBooking(accountId, tickets, promotion).then(() => 
-      router.push("/confirmation")
+    router.push({
+      pathname: '/confirmation',
+      query: {movieId: movieId, showId: showId, price: Number(price)},
+      })
     );
   }, [accountId, tickets, promotion, router]);
 
