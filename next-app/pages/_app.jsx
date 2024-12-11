@@ -11,14 +11,16 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <SessionProvider session={session}>
+        { /*
         <Navbar />
+  */ }
         <Component {...pageProps} />
       </SessionProvider>
     </div>
   );
 }
 
-const Navbar = () => {
+/*const Navbar = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -37,4 +39,4 @@ const Navbar = () => {
       ) : null}
     </nav>
   );
-};
+};*/
