@@ -162,7 +162,6 @@ const ManagePromotions = () => {
     <img src="/images/promo.jpg" alt="Promo Image" />
     <div className="promo-info">
         <h3>{promotion.code}</h3>
-        <p>{promotion.promoDesc}</p>
         <p>
             <strong>
                 End Date: {(() => {

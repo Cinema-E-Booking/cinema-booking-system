@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 type Movie = {
   id: number;
@@ -13,7 +14,6 @@ type Movie = {
   director: string;
   producer: string;
   actors: string[];
-  screening_time: string;
 };
 
 const CreateMovie = () => {
@@ -27,29 +27,30 @@ const CreateMovie = () => {
   const [director, setDirector] = useState("");
   const [producer, setProducer] = useState("");
   const [actors, setActors] = useState("");
-  const [screening_time, setScreeningTime] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const response = await fetch("/api/allMovies");
-        const result = await response.json();
-        if (result.data && Array.isArray(result.data.movies)) {
-          setMovies(result.data.movies);
-          setSuccess("Movies loaded successfully.");
-        } else {
-          setError("Failed to load movies.");
-        }
-      } catch (error) {
-        setError("An error occurred while fetching movies.");
-      }
-    };
-
     fetchMovies();
-  }, []);
+  }, [session, status]);
+
+  const fetchMovies = async () => {
+    try {
+      const response = await fetch("/api/allMoviesData");
+      const result = await response.json();
+      if (result.data && Array.isArray(result.data)) {
+        setMovies(result.data);
+        setSuccess("Movies loaded successfully.");
+      } else {
+        setError("Failed to load movies.");
+      }
+    } catch (error) {
+      setError("An error occurred while fetching movies.");
+    }
+  };
+
 
   const deleteMovie = async (id: number) => {
     try {
@@ -58,7 +59,6 @@ const CreateMovie = () => {
       });
 
       if (response.ok) {
-        setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== id));
         setSuccess("Movie deleted successfully");
       } else {
         const errorData = await response.json();
@@ -74,25 +74,10 @@ const CreateMovie = () => {
     setError("");
     setSuccess("");
 
-    if (!title || !category || !rating || !synopsis || !trailer_url || !image_url || !duration || !screening_time) {
+    if (!title || !category || !rating || !synopsis || !trailer_url || !image_url || !duration) {
       setError("All fields are required.");
       return;
     }
-
-    const movieData: Movie = {
-      id: Date.now(), // Temporary unique ID
-      title,
-      category,
-      rating,
-      synopsis,
-      trailer_url,
-      image_url,
-      duration,
-      director,
-      producer,
-      actors: actors.split(","),
-      screening_time,
-    };
 
     try {
       const response = await fetch("/api/newMovie", {
@@ -100,7 +85,10 @@ const CreateMovie = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(movieData),
+        body: JSON.stringify({title: title, category: category, rating: rating,
+        synopsis: synopsis, trailer_url: trailer_url, image_url: image_url, 
+        duration: duration, director: director, producer: producer, actors: actors.split(","),
+        }),
       });
 
       if (!response.ok) {
@@ -108,7 +96,7 @@ const CreateMovie = () => {
         throw new Error(errorData.message);
       }
 
-      setMovies([...movies, movieData]);
+      fetchMovies();
       setSuccess("Movie created successfully!");
       setTitle("");
       setCategory("");
@@ -120,7 +108,6 @@ const CreateMovie = () => {
       setDirector("");
       setProducer("");
       setActors("");
-      setScreeningTime("");
     } catch (err) {
       setError(String(err));
     }
@@ -168,24 +155,18 @@ const CreateMovie = () => {
               style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             >
               <option value="">Rating</option>
-              <option value="G">G</option>
-              <option value="PG">PG</option>
-              <option value="PG-13">PG-13</option>
-              <option value="R">R</option>
+              <option value="nr">No Rating</option>
+              <option value="g">G</option>
+              <option value="pg">PG</option>
+              <option value="pg-13">PG-13</option>
+              <option value="r">R</option>
+              <option value="nc-17">NC-17g</option>
             </select>
             <input
               type="text"
               placeholder="Duration (hh:mm:ss)"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              required
-              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
-            />
-            <input
-              type="text"
-              placeholder="Screening Time (e.g., 18:30)"
-              value={screening_time}
-              onChange={(e) => setScreeningTime(e.target.value)}
               required
               style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
@@ -266,7 +247,7 @@ const CreateMovie = () => {
                   <strong>Rating:</strong> {movie.rating}
                 </p>
                 <p>
-                  <strong>Screening Time:</strong> {movie.screening_time}
+                  <strong>Synopsis:</strong> {movie.synopsis}
                 </p>
                 <button
                   onClick={() => deleteMovie(movie.id)}
