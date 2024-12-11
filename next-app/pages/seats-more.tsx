@@ -4,6 +4,7 @@ import Script from "next/script"
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
+import { SeatStatus } from "@/lib/auditorium";
 
 const SeatsPage = () => {
   const [error, setError] = useState('');
@@ -47,12 +48,11 @@ interface Seat {
     id: number;
     row: number;
     number: number;
+    status: SeatStatus;
 } 
 
   const router = useRouter();
   const data = router.query;
-  console.log('data check: ', data);
-  console.log('query check: ', router.query);
 
   useEffect(() => {
     const fetchScreening = async () => {
@@ -133,6 +133,16 @@ interface Seat {
         ? prevSelected.filter((id) => id !== seatId)
         : [...prevSelected, seatId]
     );
+  };
+
+  const goToCheckout = () => {
+    //const ticketSeats = selectedSeats;
+    const showId = data.showId;
+    router.push({
+        pathname: '/checkout',
+        query: {showId, selectedSeats},
+        //query: { movieIntId, showId },
+    });
   };
   
 
@@ -253,7 +263,7 @@ interface Seat {
             Occupied
           </span>
         </div>
-            <button id="confirm-seats">Confirm Selection</button>
+            <button onClick={goToCheckout}>Confirm Selection</button>
         </main>
     </>
   );

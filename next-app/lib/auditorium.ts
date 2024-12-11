@@ -192,6 +192,30 @@ export async function getScreening(screeningId: number): Promise<Screening> {
   };
 }
 
+export async function getSeats(seatsId: number[]): Promise<Seat[]> {
+  console.log('database getseats check: ', seatsId);
+  const seatsIdInt = [];
+  for(let i = 0; i < seatsId.length; i++) {
+    seatsIdInt.push(seatsId[i]);
+  }
+  const seatQueryText = `SELECT * FROM seat WHERE id = ANY($1);`;
+
+  const values = [seatsIdInt];
+  const res = await query(seatQueryText, values);
+
+  const seats: Seat[] = [];
+  for (const row of res.rows) {
+    seats.push({
+      id: row.id,
+      row: row.row,
+      number: row.number,
+      status: row.status,
+    });
+  }
+
+  return seats;
+}
+
 // Will return all screenings for a movie.
 // If futureOnly is true, it will only return upcoming screenings
 export async function getMovieScreenings(movieId: number) {

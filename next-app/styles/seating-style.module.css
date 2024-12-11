@@ -11,29 +11,22 @@
   }
   
   .seatinggrid {
-    display: grid;
-    grid-template-columns: repeat(20, 1fr); /* 20 columns */
+    display: flex;
+    flex-direction: column;
     gap: 10px;
-    justify-content: center;
+    align-items: center;
     margin-bottom: 30px;
-  }
-  
-  .frontrow {
-    display: grid;
-    grid-template-columns: repeat(20, 1fr); /* 20 columns */
-    gap: 10px;
-    justify-content: center;
-    margin-top: 30px;
   }
   
   .row {
     display: flex;
+    gap: 10px;
     justify-content: center;
   }
   
   .seat {
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
     border: 1px solid #002b5c;
     border-radius: 5px;
     cursor: pointer;

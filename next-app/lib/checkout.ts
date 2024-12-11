@@ -22,8 +22,8 @@ export interface Booking {
   promotionCode?: string;
 };
 
-type CreateTicketOpts = Omit<Ticket, "id" | "bookingId">;
-async function createTicket(opts: CreateTicketOpts, bookingId: number) {
+export type CreateTicketOpts = Omit<Ticket, "id" | "bookingId">;
+export async function createTicket(opts: CreateTicketOpts, bookingId: number) {
   const queryText = `
   INSERT INTO ticket (screening_id, seat_id, booking_id, tick_type)
   VALUES ($1, $2, $3, $4)
