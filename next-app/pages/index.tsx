@@ -18,6 +18,7 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const [rating, setRating] = useState("all");
   const [searchStatus, setSearchStatus] = useState("");
+  const [ratedMovies, setRatedMovies] = useState([]);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -76,6 +77,35 @@ const Home = () => {
     }
   };
 
+  const fetchRatedMovies = async () => {
+    try {
+        const response = await fetch(`/api/searchRatings?rating=${rating}`);
+        const result = await response.json();
+        console.log('rating check:', result);
+        console.log('rating check 2:', result.result.movies);
+        //console.log('index check 2:', result.data.movies[0]);
+        //console.log('index check 3:', result.data.movies[0][2]);
+  
+        // Assuming the response structure is `{ data: Array(3) }`
+        if (result.result && Array.isArray(result.result.movies)) {
+          //setRatedMovies(result.result.movies); // Set the fetched movies data
+          //setRowCount(result.result.rowCount);
+          goToRatedMoviePage(rating);
+        } else {
+            setSearchStatus("No Such Movie");
+        }
+    } catch (error) {
+        setError("An error occurred while fetching movies.");
+    }
+  };
+
+  const goToRatedMoviePage = (rating: string) => {
+    router.push({
+      pathname: '/ratedMovies',
+      query: {rating},
+    });
+  };
+
   const nextNowShowing = () => {
     setNSIndex((prevIndex) => (prevIndex + 3) % nsMovies.length);
   };
@@ -101,7 +131,11 @@ const Home = () => {
   };
 
   const handleSearch = () => {
-    fetchSearchMovies();
+    if(rating === 'all') {
+      fetchSearchMovies();
+    } else {
+      fetchRatedMovies();
+    }
   };
 
   return (
@@ -327,10 +361,12 @@ const Home = () => {
     title="Filter movies by rating" // Added title attribute for accessibility
   >
     <option value="all">All Ratings</option>
-    <option value="G">G</option>
-    <option value="PG">PG</option>
-    <option value="PG-13">PG-13</option>
-    <option value="R">R</option>
+    <option value="g">G</option>
+    <option value="pg">PG</option>
+    <option value="pg-13">PG-13</option>
+    <option value="r">R</option>
+    <option value="nc-17">NC-17</option>
+    <option value="nr">NR</option>
   </select>
 </div>
 
