@@ -21,6 +21,9 @@ const ManagePromotions = () => {
     const [success, setSuccess] = useState('');
     const [promotions, setPromotions] = useState<Promotion[]>([]); // Set the correct type for promotions
     const { data: session, status } = useSession();
+    const [emailList, setEmailList] = useState<string[]>([]);
+    const [subject, setSubject] = useState('');
+    const [emailMessage, setEmailMessage] = useState('');
 
     useEffect(() => {
         fetchPromotions();
@@ -82,7 +85,66 @@ const ManagePromotions = () => {
         } catch (err) {
             setError("Could not create promotion");
         }
+        handleReload();
     };
+
+    const handleReload = () => {
+        window.location.reload();
+    };
+
+    const fetchEmails = async (promo: Promotion) => {
+        setSubject("Movie Savings Deals!");
+        setEmailMessage("Use code " + promo['code'] + " at checkout. Valid now through " + promo['endTime']);
+        console.log('promo check: ', promo);
+        console.log('promo message check: ', emailMessage);
+        try{
+            const response = await fetch(`./api/getEmails`);
+            const result = await response.json();
+      
+            if(response.ok) {
+              console.log('emails check:', result);
+              console.log('email check 1:', result);
+              setEmailList(result);
+              setSuccess("Email created");
+              console.log('emails check:', emailList);
+                //setMovies((prevMovies) => prevMovies.filter((movie) => movie[0] !== id));
+                //setSuccess("Movie deleted successfully");
+                //setSuccess("Movie deleted successfully");
+            } else {
+                const errorData = await response.json();
+                setError(errorData.message);
+            }
+        } catch (error) {
+            setError("Error happened while fetching emails");
+        }
+      };
+
+      const sendEmails = async () => {
+        try{
+            //console.log('promo code check:',promo);
+            //console.log('email check:', emailList);
+            //setEmailMessage("Use code " + promo[0] + " to save up to " + promo[1] +"% at checkout. Valid now through " + promo[2]);
+            const response = await fetch('/api/send-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ emailList, subject, emailMessage }),
+            });
+      
+            if(!response.ok) {
+              setError("Error sending promotion emails:");
+            }
+        } catch (error) {
+            setError("Error happened while sending promotion emails");
+        }
+      };
+      
+      useEffect(() => {
+          console.log('message Check:', emailMessage);
+      }, [emailMessage]);
+      
+      useEffect(() => {
+        console.log('email Check:', emailList);
+      }, [emailList]);
 
     return (
         <>
@@ -180,8 +242,8 @@ const ManagePromotions = () => {
             </strong>
         </p>
         <div className="actions">
-            <button>Edit</button>
-            <button>Delete</button>
+            <button onClick={() => fetchEmails(promotion)}>Create Promo Email</button>
+            <button onClick={() => sendEmails()}>Send Promotion</button>
         </div>
     </div>
 </div>
