@@ -62,7 +62,7 @@ const MoviePage = () => {
         const movieIntId = data.id;
         const showId = screening;
         router.push({
-            pathname: '/seats',
+            pathname: '/seats-more',
             query: { movieIntId, showId },
         });
     };

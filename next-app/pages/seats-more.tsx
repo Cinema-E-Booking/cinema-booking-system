@@ -54,7 +54,7 @@ interface Seat {
   useEffect(() => {
     const fetchScreening = async () => {
       try {
-        const response = await fetch(`/api/getOneScreening?id=${data.id}`);
+        const response = await fetch(`/api/getOneScreening?id=${data.showId}`);
         const screeningData = await response.json();
         console.log('availableSeats check: ', screeningData.response.availableSeats);
         setSeats(screeningData.response.availableSeats);
