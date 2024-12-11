@@ -95,7 +95,7 @@ export async function getScreening(screeningId: number) {
             headers: { 'Content-Type': 'application/json' },
           });
           const screenResponse = await response.json();
-          const screenData = await screenResponse.response;
+          const screenData = screenResponse.response;
 
           return screenData;
     } catch (err) {

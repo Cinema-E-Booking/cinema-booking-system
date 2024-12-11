@@ -1,11 +1,11 @@
 import { query } from "./database";
 import { getPromotion } from "./promotion";
 
-const TICKET_PRICE_ADULT = 10.99;
-const TICKET_PRICE_SENIOR = 9.99;
-const TICKET_PRICE_CHILD = 8.49;
+export const TICKET_PRICE_ADULT = 10.99;
+export const TICKET_PRICE_SENIOR = 9.99;
+export const TICKET_PRICE_CHILD = 8.49;
 
-type TicketType = "adult" | "senior" | "child";
+export type TicketType = "adult" | "senior" | "child";
 
 export interface Ticket {
   id: number;

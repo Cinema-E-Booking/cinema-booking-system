@@ -11,6 +11,8 @@ export default async function handler(
     try {
         const response = await getScreening(screeningId);
 
+
+        console.log("api returning" + JSON.stringify(response))
         return res.status(200).json({ response });
     } catch (error) {
         console.error('Error getting screening', error);

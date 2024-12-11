@@ -24,7 +24,7 @@ export async function createPromotion(opts: CreatePromotionOpts) {
 export async function getPromotion(code: string): Promise<Promotion | null> {
   const queryText = `
     SELECT
-      code, percent_off, start_time, editable
+      code, percent_off, end_time, editable
     FROM promotion
     WHERE code = $1;
   `;
@@ -100,7 +100,7 @@ export async function editPromotion(code: string, opts: EditPromotionOpts) {
   const queryText = `
   UPDATE promotion SET
     percent_off = COALESCE($2, percent_off),
-    start_time = COALESCE($3, start_time)
+    end_time = COALESCE($3, end_time)
   WHERE code = $1;
   `;
 
