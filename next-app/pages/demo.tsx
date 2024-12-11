@@ -255,6 +255,10 @@ export default function demo() {
         })
     }
 
+    const createPromotion = async () => {
+        
+    }
+
     const createData = async () => {
 
         createMovie(movie1);
